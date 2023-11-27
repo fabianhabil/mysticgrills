@@ -81,7 +81,7 @@ public class Main extends Application {
 		age = new Spinner<>(1, 20, 10);
 		DOB = new DatePicker();
 		terms = new CheckBox("Agree to Terms & Agreements");
-		registerBtn = new Button("Register");
+		registerBtn = new Button("TEST AJA");
 		
 		scene = new Scene(bp, 500, 650);
 		

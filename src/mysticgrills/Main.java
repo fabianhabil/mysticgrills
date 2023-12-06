@@ -1,5 +1,9 @@
 package mysticgrills;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -23,6 +27,8 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+	
+	DatabaseConnection db = DatabaseConnection.getInstance();
 
 	Scene scene;
 	GridPane gp;
@@ -128,6 +134,22 @@ public class Main extends Application {
 		stage.setScene(scene);
 		stage.setTitle("Mystic Grills");
 		stage.show();
+		
+		registerBtn.setOnMouseClicked(e -> {
+			String query = String.format("SELECT * FROM `users` WHERE 1");
+			PreparedStatement ps = db.preparedStatement(query);
+			ResultSet rs;
+			try {
+				rs = ps.executeQuery();
+				while(rs.next()) {
+					System.out.println(rs.getString("userName"));
+				}
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		});
 	}
 
 }

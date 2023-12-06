@@ -22,9 +22,9 @@ public class DatabaseConnection {
 	public ResultSet rs;
 	public static DatabaseConnection connect;
 	
-	public  static DatabaseConnection getInstance() {
+	public static DatabaseConnection getInstance() {
 		if(connect == null) {
-			System.out.println("Database connect dibuat");
+			System.out.println("Database connect");
 			return new DatabaseConnection();
 		}
 		return connect;
@@ -50,12 +50,14 @@ public class DatabaseConnection {
 		return rs;
 	}
 	
-	public void execute(String query) {
+	public Boolean execute(String query) {
 		try {
 			st.executeUpdate(query);
+			return true;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			return false;
 		}
 	}
 	

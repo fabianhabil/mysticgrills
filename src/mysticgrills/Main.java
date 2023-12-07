@@ -13,7 +13,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		stage.setScene(new Scene(new Register(), 1366, 768));
+		stage.setScene(new Scene(new Register(stage), 1366, 768));
 		stage.show();
 	}
 

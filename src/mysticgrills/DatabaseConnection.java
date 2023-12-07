@@ -20,12 +20,13 @@ public class DatabaseConnection {
 	private Statement st;
 	
 	public ResultSet rs;
-	public static DatabaseConnection connect;
+	public static DatabaseConnection connect = null;
 	
 	public static DatabaseConnection getInstance() {
 		if(connect == null) {
 			System.out.println("Database connect");
-			return new DatabaseConnection();
+			connect = new DatabaseConnection();
+			return connect;
 		}
 		return connect;
 	}

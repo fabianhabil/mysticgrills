@@ -4,27 +4,59 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import mysticgrills.DatabaseConnection;
+import mysticgrills.model.User;
 
 public class UserController {
+	
 	private DatabaseConnection db = DatabaseConnection.getInstance();
+	User user = new User();
 	
 	public String createUser(String userRole, String userName, String userEmail, String userPassword, String passwordConfirm) {
-		Validation validate = new Validation();
 		
-		String validation = validate.validationUser(userName, userEmail, userPassword, passwordConfirm);
-		
-		if(!validation.equals("Success")) {
-			return validation;
+		if(userName.isBlank()) {
+			return "Username cannot be empty";
 		}
 		
-		String query = String.format("INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('user','%s','%s','%s')", userName, userEmail, userPassword);
-		if(!db.execute(query)) {
-			return "Error insert";
+		if(userEmail.isBlank()) {
+			return "Email cannot be empty";
 		}
-		return "DB Insert";
+		
+		if(getCountUserEmail(userEmail) != 0) {
+			return "Email is not unique";
+		}
+		
+		if(userPassword.length() < 6 || userPassword.isBlank() || passwordConfirm.isBlank()) {
+			return "Password must be 6 characters long";
+		}
+		
+		if(!userPassword.equals(passwordConfirm)) {
+			return "Password must be same with confirm password";
+		}
+		
+		String status = user.createUser(userRole, userName, userEmail, userPassword, passwordConfirm);
+		return status;
+	}
+	
+	public String authenticateUser(String userEmail, String userPassword) {
+		if(userEmail.isBlank()) {
+			return "Email must be filled";
+		}
+		
+		if(userPassword.isBlank()) {
+			return "Password must be filled";
+		}
+		
+		if(getCountUserEmail(userEmail) < 1) {
+			return "Email doesn't exist";
+		}
+		
+		String status = user.authenticateUser(userEmail, userPassword);
+	
+		return status;
 	}
 	
 	public int getCountUserEmail(String userEmail) {
+
 		String query = String.format("SELECT COUNT(`userEmail`) FROM `users` WHERE `userEmail` = \"%s\"", userEmail);
 		
 		ResultSet rs = db.selectData(query);

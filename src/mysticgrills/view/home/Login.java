@@ -13,47 +13,41 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import mysticgrills.GlobalState;
 import mysticgrills.controller.UserController;
+//import mysticgrills.model.User;
 
-public class Register extends BorderPane {
+public class Login extends BorderPane {
 	
 	Scene sc;
 	private UserController userController = new UserController();
-	private GlobalState gb = GlobalState.getInstance();
 
-
-	public Register(Stage stage) {
+	public Login(Stage stage) {
+		// TODO Auto-generated constructor stub
 		VBox container = new VBox();
-		Label title = new Label("Register");
+		Label title = new Label("Login");
 		TextField usernameField = new TextField();
-		TextField emailField = new TextField();
 		PasswordField passField = new PasswordField();
-		PasswordField passConfirmField = new PasswordField();
 		
 		Label username = new Label("Username");
-		Label email = new Label("Email");
 		Label pass = new Label("Password");
-		Label passConfirm = new Label ("Password Confirmation");
-		Button registerButton = new Button("Register");
-		Label changePage = new Label("Already have an account? Login");
+		Button loginButton = new Button("Login");
+		Label changePage = new Label("Register");
 		
+		container.getChildren().addAll(title, username, usernameField, pass, passField, loginButton, changePage);
 		
-		container.getChildren().addAll(title, username, usernameField, email, emailField, pass, passField, passConfirm, passConfirmField, registerButton, changePage);
-		
-		registerButton.setOnMouseClicked(e -> {
-			String status = userController.createUser("user",  usernameField.getText(), emailField.getText(), passField.getText(), passConfirmField.getText());
+		loginButton.setOnMouseClicked(e -> {
+			String status = userController.authenticateUser(usernameField.getText(), passField.getText());
 			
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Message");
 			
-			if(status.contains("successfully")) {
+			System.out.println(status);
+			if(status.contains("success")) {
 				alert.setHeaderText("Success");
 				alert.setContentText(status);
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result.isPresent() && result.get() == ButtonType.OK) {
 					System.out.println("The user clicked OK");
-					stage.setScene(new Scene(new Login(stage), 1366, 768));
 				}
 			} else {
 				alert.setHeaderText("Error message");
@@ -65,13 +59,12 @@ public class Register extends BorderPane {
 			}
 		});
 		
+		setCenter(container);
+		
 		changePage.setOnMouseClicked(e -> {
-			stage.setScene(new Scene(new Login(stage), 1366, 768));
+			stage.setScene(new Scene(new Register(stage), 1366, 768));
 		});
 		
-		System.out.println(gb.getName());
-//		
-		setCenter(container);
 	}
 
 }

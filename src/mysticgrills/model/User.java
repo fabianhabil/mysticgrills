@@ -1,4 +1,9 @@
 package mysticgrills.model;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import mysticgrills.DatabaseConnection;
+import mysticgrills.GlobalState;
 
 public class User {
 	
@@ -8,13 +13,12 @@ public class User {
 	private String userEmail;
 	private String userPassword;
 	
+	private DatabaseConnection db = DatabaseConnection.getInstance();
+	private GlobalState global = GlobalState.getInstance();
 	
-	public User(Integer userId, String userRole, String userName, String userEmail, String userPassword) {
-		this.userId = userId;
-		this.userRole = userRole;
-		this.userName = userName;
-		this.userEmail = userEmail;
-		this.userPassword = userPassword;
+	
+	public User() {
+
 	}
 
 	public Integer getUserId() {
@@ -66,6 +70,30 @@ public class User {
 		this.userPassword = userPassword;
 	}
 	
+	public String createUser(String userRole, String userName, String userEmail, String userPassword, String passwordConfirm) {
+		String query = String.format("INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('user','%s','%s','%s')", userName, userEmail, userPassword);
+		if(!db.execute(query)) {
+			return "Error insert to DB";
+		}
+		return "Your account has been successfully created. Please log in to access your account.";
+	}
 	
+	public String authenticateUser(String userEmail, String userPassword) {
+		String query = String.format("SELECT * FROM `users` WHERE `userEmail` = \"%s\" AND `userPassword` = \"%s\"", userEmail, userPassword);
+		ResultSet rs = db.selectData(query);
+		try {
+			if(rs.next()) {
+				if(rs.getString(4).equals(userEmail) && rs.getString(5).equals(userPassword)) {
+					System.out.println(rs.getInt(1) + rs.getString(2) + rs.getString(3) + rs.getString(4) + rs.getString(5));
+					global.addUser(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
+					return "Login success";					
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Username or Password wrong";
+	}
 
 }

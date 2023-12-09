@@ -2,6 +2,7 @@ package mysticgrills.controller;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import mysticgrills.DatabaseConnection;
 import mysticgrills.model.User;
@@ -71,6 +72,10 @@ public class UserController {
 		}
 		
 		return count;
+	}
+	
+	public ArrayList<User> getUser() {
+		return user.getUser();
 	}
 
 }

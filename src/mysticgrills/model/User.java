@@ -1,7 +1,8 @@
 package mysticgrills.model;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.util.ArrayList;
 import mysticgrills.DatabaseConnection;
 import mysticgrills.GlobalState;
 
@@ -20,6 +21,16 @@ public class User {
 	public User() {
 
 	}
+
+	public User(Integer userId, String userRole, String userName, String userEmail) {
+		super();
+		this.userId = userId;
+		this.userRole = userRole;
+		this.userName = userName;
+		this.userEmail = userEmail;
+	}
+
+
 
 	public Integer getUserId() {
 		return userId;
@@ -94,6 +105,29 @@ public class User {
 			e.printStackTrace();
 		}
 		return "Username or Password wrong";
+	}
+	
+	public ArrayList<User> getUser() {
+		ArrayList<User> users = new ArrayList<User>();
+
+        ResultSet rs = db.selectData("SELECT * FROM users");
+
+        try {
+            while (rs.next()) {
+                Integer id = rs.getInt("userId");
+                String role = rs.getString("userRole");
+                String name = rs.getString("userName");
+                String email = rs.getString("userEmail");
+                System.out.println(id + " " + role + " " + name + " " + email);
+                users.add(new User(id, role, name, email));
+
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return users;
 	}
 
 }

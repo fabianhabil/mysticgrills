@@ -1,6 +1,8 @@
 package mysticgrills.view.home;
 
 import java.util.Optional;
+
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -14,13 +16,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.GlobalState;
 import mysticgrills.controller.UserController;
+import mysticgrills.view.user.ManageUser;
 
 public class Register extends BorderPane {
 	
 	Scene sc;
 	private UserController userController = new UserController();
 	private GlobalState gb = GlobalState.getInstance();
-
 
 	public Register(Stage stage) {
 		VBox container = new VBox();
@@ -37,8 +39,8 @@ public class Register extends BorderPane {
 		Button registerButton = new Button("Register");
 		Label changePage = new Label("Already have an account? Login");
 		
-		
 		container.getChildren().addAll(title, username, usernameField, email, emailField, pass, passField, passConfirm, passConfirmField, registerButton, changePage);
+		container.setPadding(new Insets(10));
 		
 		registerButton.setOnMouseClicked(e -> {
 			String status = userController.createUser("user",  usernameField.getText(), emailField.getText(), passField.getText(), passConfirmField.getText());

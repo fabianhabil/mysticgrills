@@ -14,11 +14,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.controller.UserController;
-//import mysticgrills.model.User;
 
 public class Login extends BorderPane {
 	
-	Scene sc;
 	private UserController userController = new UserController();
 
 	public Login(Stage stage) {

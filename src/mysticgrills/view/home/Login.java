@@ -25,18 +25,18 @@ public class Login extends BorderPane {
 		// TODO Auto-generated constructor stub
 		VBox container = new VBox();
 		Label title = new Label("Login");
-		TextField usernameField = new TextField();
+		TextField emailField = new TextField();
 		PasswordField passField = new PasswordField();
 		
-		Label username = new Label("Username");
+		Label email = new Label("Email");
 		Label pass = new Label("Password");
 		Button loginButton = new Button("Login");
 		Label changePage = new Label("Register");
 		
-		container.getChildren().addAll(title, username, usernameField, pass, passField, loginButton, changePage);
+		container.getChildren().addAll(title, email, emailField, pass, passField, loginButton, changePage);
 		
 		loginButton.setOnMouseClicked(e -> {
-			String status = userController.authenticateUser(usernameField.getText(), passField.getText());
+			String status = userController.authenticateUser(emailField.getText(), passField.getText());
 			
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Message");

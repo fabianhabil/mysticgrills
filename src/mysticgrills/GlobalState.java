@@ -45,5 +45,14 @@ public class GlobalState {
 	public Integer getId() {
 		return id;
 	}
+	
+	public void removeUser() {
+		this.id = null;
+		this.role = null;
+		this.name = null;
+		this.email = null;
+		this.password = null;
+		System.out.println("user removed");
+	}
     
 }

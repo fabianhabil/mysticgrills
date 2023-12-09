@@ -1,7 +1,6 @@
 package mysticgrills.view.home;
 
 import java.util.Optional;
-
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -70,7 +69,7 @@ public class Register extends BorderPane {
 		});
 		
 		System.out.println(gb.getName());
-//		
+		
 		setCenter(container);
 	}
 

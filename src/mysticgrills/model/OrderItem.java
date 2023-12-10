@@ -1,11 +1,11 @@
 package mysticgrills.model;
 
 public class OrderItem {
-	
+
 	private Integer orderId;
 	private MenuItem menuItem;
 	private Integer quantity;
-	
+
 	public OrderItem(Integer orderId, MenuItem menuItem, Integer quantity) {
 		this.orderId = orderId;
 		this.menuItem = menuItem;
@@ -35,7 +35,5 @@ public class OrderItem {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	
-	
-	
+
 }

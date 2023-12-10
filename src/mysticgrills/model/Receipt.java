@@ -9,7 +9,7 @@ public class Receipt {
 	private Integer receiptPaymentAmount;
 	private Date receiptPaymentDate;
 	private String receiptPaymentType;
-	
+
 	public Receipt(Integer receiptId, Order receiptOrder, Integer receiptPaymentAmount, Date receiptPaymentDate,
 			String receiptPaymentType) {
 		this.receiptId = receiptId;
@@ -58,7 +58,5 @@ public class Receipt {
 	public void setReceiptPaymentType(String receiptPaymentType) {
 		this.receiptPaymentType = receiptPaymentType;
 	}
-	
-	
-	
+
 }

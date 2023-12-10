@@ -11,7 +11,7 @@ public class Order {
 	private String orderStatus;
 	private Date orderDate;
 	private Integer orderTotal;
-	
+
 	public Order(Integer orderId, User orderUser, ArrayList<OrderItem> orderItems, String orderStatus, Date orderDate,
 			Integer orderTotal) {
 		this.orderId = orderId;
@@ -69,9 +69,5 @@ public class Order {
 	public void setOrderTotal(Integer orderTotal) {
 		this.orderTotal = orderTotal;
 	}
-	
-	
 
-	
-	
 }

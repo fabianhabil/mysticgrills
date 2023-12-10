@@ -19,9 +19,8 @@ import mysticgrills.controller.UserController;
 import mysticgrills.view.user.ManageUser;
 
 public class Register extends BorderPane {
-	
-	Scene sc;
-	private UserController userController = new UserController();
+
+	private UserController userController = UserController.getUC();
 	private GlobalState gb = GlobalState.getInstance();
 
 	public Register(Stage stage) {
@@ -31,24 +30,26 @@ public class Register extends BorderPane {
 		TextField emailField = new TextField();
 		PasswordField passField = new PasswordField();
 		PasswordField passConfirmField = new PasswordField();
-		
+
 		Label username = new Label("Username");
 		Label email = new Label("Email");
 		Label pass = new Label("Password");
-		Label passConfirm = new Label ("Password Confirmation");
+		Label passConfirm = new Label("Password Confirmation");
 		Button registerButton = new Button("Register");
 		Label changePage = new Label("Already have an account? Login");
-		
-		container.getChildren().addAll(title, username, usernameField, email, emailField, pass, passField, passConfirm, passConfirmField, registerButton, changePage);
+
+		container.getChildren().addAll(title, username, usernameField, email, emailField, pass, passField, passConfirm,
+				passConfirmField, registerButton, changePage);
 		container.setPadding(new Insets(10));
-		
+
 		registerButton.setOnMouseClicked(e -> {
-			String status = userController.createUser("user",  usernameField.getText(), emailField.getText(), passField.getText(), passConfirmField.getText());
-			
+			String status = userController.createUser("user", usernameField.getText(), emailField.getText(),
+					passField.getText(), passConfirmField.getText());
+
 			Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Message");
-			
-			if(status.contains("successfully")) {
+
+			if (status.contains("successfully")) {
 				alert.setHeaderText("Success");
 				alert.setContentText(status);
 				Optional<ButtonType> result = alert.showAndWait();
@@ -65,13 +66,11 @@ public class Register extends BorderPane {
 				}
 			}
 		});
-		
+
 		changePage.setOnMouseClicked(e -> {
 			stage.setScene(new Scene(new Login(stage), 1366, 768));
 		});
-		
-		System.out.println(gb.getName());
-		
+
 		setCenter(container);
 	}
 

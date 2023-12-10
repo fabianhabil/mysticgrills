@@ -13,24 +13,23 @@ public class DatabaseConnection {
 	private final String password = "";
 	private final String database = "mysticgrills";
 	private final String host = "localhost:3306";
-	private final String connection = String.format(
-			"jdbc:mysql://%s/%s", host, database);
-	
+	private final String connection = String.format("jdbc:mysql://%s/%s", host, database);
+
 	private Connection con;
 	private Statement st;
-	
+
 	public ResultSet rs;
 	public static DatabaseConnection connect = null;
-	
+
 	public static DatabaseConnection getInstance() {
-		if(connect == null) {
-			System.out.println("Database connect");
+		if (connect == null) {
+			System.out.println("Database Connected");
 			connect = new DatabaseConnection();
 			return connect;
 		}
 		return connect;
 	}
-	
+
 	private DatabaseConnection() {
 		try {
 			con = DriverManager.getConnection(connection, username, password);
@@ -40,7 +39,8 @@ public class DatabaseConnection {
 			e.printStackTrace();
 		}
 	}
-	
+
+	// For SELECT query
 	public ResultSet selectData(String query) {
 		try {
 			rs = st.executeQuery(query);
@@ -50,7 +50,8 @@ public class DatabaseConnection {
 		}
 		return rs;
 	}
-	
+
+	// For UPDATE, DELETE query
 	public Boolean execute(String query) {
 		try {
 			st.executeUpdate(query);
@@ -61,8 +62,8 @@ public class DatabaseConnection {
 			return false;
 		}
 	}
-	
-//	for avoid sql injection
+
+	// For all query and avoid SQL Injection
 	public PreparedStatement preparedStatement(String query) {
 		PreparedStatement ps = null;
 		try {
@@ -71,8 +72,8 @@ public class DatabaseConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return ps;
-		
+
 	}
 }

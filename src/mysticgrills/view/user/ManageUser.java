@@ -14,40 +14,38 @@ import mysticgrills.controller.UserController;
 import mysticgrills.model.User;
 
 public class ManageUser extends BorderPane {
-	
+
 	TableView<User> viewUser;
 	ArrayList<User> users;
 	Button registerButton;
-	
-	private UserController userController = new UserController();
-	
-	
-	
+
+	private UserController userController = UserController.getUC();
+
 	public void initialize() {
 		registerButton = new Button("Register");
 		viewUser = new TableView<User>();
 		users = new ArrayList<User>();
 		setTable();
 	}
-		
+
 	public void setTable() {
 		TableColumn<User, Integer> idColumn = new TableColumn<User, Integer>("User ID");
 		TableColumn<User, String> roleColumn = new TableColumn<User, String>("User Role");
 		TableColumn<User, String> nameColumn = new TableColumn<User, String>("User Name");
 		TableColumn<User, String> emailColumn = new TableColumn<User, String>("User Email");
-		
+
 		viewUser.getColumns().addAll(idColumn, roleColumn, nameColumn, emailColumn);
-		
+
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
 		roleColumn.setCellValueFactory(new PropertyValueFactory<>("userRole"));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("userEmail"));
-		
+
 		users = userController.getUser();
 		viewUser.getItems().clear();
 		viewUser.getItems().addAll(users);
 	}
-	
+
 	public ManageUser(Stage stage) {
 		ScrollPane container = new ScrollPane();
 		initialize();
@@ -57,6 +55,5 @@ public class ManageUser extends BorderPane {
 		setCenter(container);
 		setBottom(registerButton);
 	}
-
 
 }

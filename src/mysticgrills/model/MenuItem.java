@@ -1,12 +1,12 @@
 package mysticgrills.model;
 
 public class MenuItem {
-	
+
 	private Integer menuItemId;
 	private String menuItemName;
 	private String menuItemDesc;
 	private String menuItemPrice;
-	
+
 	public MenuItem(Integer menuItemId, String menuItemName, String menuItemDesc, String menuItemPrice) {
 		this.menuItemId = menuItemId;
 		this.menuItemName = menuItemName;
@@ -46,6 +46,4 @@ public class MenuItem {
 		this.menuItemPrice = menuItemPrice;
 	}
 
-	
-	
 }

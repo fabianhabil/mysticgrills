@@ -41,7 +41,7 @@ public class ManageUser extends BorderPane {
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("userName"));
 		emailColumn.setCellValueFactory(new PropertyValueFactory<>("userEmail"));
 
-		users = userController.getUser();
+		users = userController.getAllUser();
 		viewUser.getItems().clear();
 		viewUser.getItems().addAll(users);
 	}

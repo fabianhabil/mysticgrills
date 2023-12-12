@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.controller.UserController;
+import mysticgrills.view.user.ManageUser;
 
 public class Login extends BorderPane {
 
@@ -46,6 +47,7 @@ public class Login extends BorderPane {
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result.isPresent() && result.get() == ButtonType.OK) {
 					System.out.println("The user clicked OK");
+					stage.setScene(new Scene(new ManageUser(stage), 1366, 768));
 				}
 			} else {
 				alert.setHeaderText("Error message");

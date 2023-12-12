@@ -100,7 +100,7 @@ public class User {
 		return "Username or Password wrong";
 	}
 
-	public ArrayList<User> getUser() {
+	public ArrayList<User> getAllUser() {
 		ArrayList<User> users = new ArrayList<User>();
 
 		ResultSet rs = db.selectData("SELECT * FROM users");

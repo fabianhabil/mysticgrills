@@ -101,8 +101,8 @@ public class UserController {
 		return count;
 	}
 
-	public ArrayList<User> getUser() {
-		return user.getUser();
+	public ArrayList<User> getAllUser() {
+		return user.getAllUser();
 	}
 
 }

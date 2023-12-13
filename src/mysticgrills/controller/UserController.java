@@ -100,6 +100,32 @@ public class UserController {
 
 		return count;
 	}
+	
+	public Boolean deleteUser(Integer userId) {
+		
+		// check userId from DB and Delete from DB
+		if(getCountUserId(userId) == 1 && user.deleteUser(userId)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public int getCountUserId(Integer userId) {
+		String query = String.format("SELECT COUNT(`userId`) FROM `users` WHERE `userId` = \"%s\"", userId);
+		int count = 0;
+		ResultSet rs = db.selectData(query);
+		try {
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		System.out.println(count);
+		return count;
+	}
 
 	public ArrayList<User> getAllUser() {
 		return user.getAllUser();

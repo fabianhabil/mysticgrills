@@ -72,7 +72,7 @@ public class User {
 	public String createUser(String userRole, String userName, String userEmail, String userPassword,
 			String passwordConfirm) {
 		String query = String.format(
-				"INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('user','%s','%s','%s')",
+				"INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('User','%s','%s','%s')",
 				userName, userEmail, userPassword);
 		if (!db.execute(query)) {
 			return "Error insert to DB";
@@ -98,6 +98,12 @@ public class User {
 			e.printStackTrace();
 		}
 		return "Username or Password wrong";
+	}
+	
+	public Boolean deleteUser(Integer userId) {
+		
+		String query = String.format("DELETE FROM `users` WHERE `userId` = \"%s\"", userId);
+		return db.execute(query);
 	}
 
 	public ArrayList<User> getAllUser() {

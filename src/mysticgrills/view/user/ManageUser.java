@@ -69,7 +69,7 @@ public class ManageUser extends BorderPane {
 		viewUser.setMaxHeight(800);
 		viewUser.setPadding(new Insets(10, 10, 10, 10));
 		
-		role.getItems().addAll("Admin", "User", "Cashier");
+		role.getItems().addAll("Admin", "Cashier", "Chef", "Waiter", "Customer");
 		
 		formBox.setPadding(new Insets(10, 10, 10, 10));
 		formBox.add(nameLbl, 0, 0);

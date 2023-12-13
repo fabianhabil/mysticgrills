@@ -72,7 +72,7 @@ public class User {
 	public String createUser(String userRole, String userName, String userEmail, String userPassword,
 			String passwordConfirm) {
 		String query = String.format(
-				"INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('User','%s','%s','%s')",
+				"INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('Customer','%s','%s','%s')",
 				userName, userEmail, userPassword);
 		if (!db.execute(query)) {
 			return "Error insert to DB";

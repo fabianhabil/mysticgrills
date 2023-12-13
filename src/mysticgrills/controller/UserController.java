@@ -101,6 +101,13 @@ public class UserController {
 		return count;
 	}
 	
+	public Boolean updateUser(Integer userId, String newUserRole) {
+		if(user.updateUser(userId, newUserRole)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public Boolean deleteUser(Integer userId) {
 		
 		// check userId from DB and Delete from DB

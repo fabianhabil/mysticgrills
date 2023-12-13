@@ -177,6 +177,45 @@ public class ManageUser extends BorderPane {
 			}
 		}
 	}
+	
+	public void updateFunction() {
+		// confirmation dialog
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Cofirm");
+		alert.setHeaderText("Confirm Message");
+		alert.setContentText("Are you sure want to update this?");
+		Optional<ButtonType> yes = alert.showAndWait();
+		if (yes.isPresent() && yes.get() == ButtonType.OK) {
+			// update user from DB
+			Boolean status = userController.updateUser(tempId, role.getSelectionModel().getSelectedItem());
+			
+			// if user has been updated refresh the table
+			if(status) {
+				Alert alert2 = new Alert(AlertType.INFORMATION);
+				alert2.setTitle("Success");
+				alert2.setHeaderText("Success");
+				alert2.setContentText("Account has been updated!");
+				Optional<ButtonType> result = alert2.showAndWait();
+				if (result.isPresent() && result.get() == ButtonType.OK) {
+					System.out.println("The user clicked OK");
+					refreshTable();
+					nameTextField.clear();
+					emailTextField.clear();
+					role.getSelectionModel().clearSelection();
+				}	
+			// if error update from the database display error message
+			} else {
+				Alert alert3 = new Alert(AlertType.INFORMATION);
+				alert3.setTitle("Message");
+				alert3.setHeaderText("Error message");
+				alert3.setContentText("Error to delete");
+				Optional<ButtonType> result = alert3.showAndWait();
+				if (result.isPresent() && result.get() == ButtonType.OK) {
+					System.out.println("The user clicked OK");
+				}	
+			}
+		}
+	}
 
 	public ManageUser(Stage stage) {
 		initialize();
@@ -186,6 +225,10 @@ public class ManageUser extends BorderPane {
 		
 		deleteButton.setOnMouseClicked(e -> {
 			deleteFunction();
+		});
+		
+		updateButton.setOnMouseClicked(e -> {
+			updateFunction();
 		});
 	}
 

@@ -100,6 +100,11 @@ public class User {
 		return "Username or Password wrong";
 	}
 	
+	public Boolean updateUser(Integer userId, String newUserRole) {
+		String query = String.format("UPDATE `users` SET `userRole`= \"%s\" WHERE `userId` = \"%s\"", newUserRole, userId);
+		return db.execute(query);
+	}
+	
 	public Boolean deleteUser(Integer userId) {
 		
 		String query = String.format("DELETE FROM `users` WHERE `userId` = \"%s\"", userId);

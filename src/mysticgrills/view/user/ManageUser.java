@@ -1,14 +1,11 @@
 package mysticgrills.view.user;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,19 +13,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableSelectionModel;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.controller.UserController;
 import mysticgrills.model.User;
+import mysticgrills.utils.Dialog;
 
 public class ManageUser extends BorderPane {
 
@@ -43,6 +38,7 @@ public class ManageUser extends BorderPane {
 	Label roleLbl, nameLbl, emailLbl;
 	ComboBox<String> role;
 	Integer tempId;
+	Dialog dg;
 
 	private UserController userController = UserController.getUC();
 
@@ -62,6 +58,7 @@ public class ManageUser extends BorderPane {
 		deleteButton = new Button("Delete");
 		viewUser = new TableView<User>();
 		users = new ArrayList<User>();
+		dg = new Dialog();
 		
 		nameTextField.setEditable(false);
 		emailTextField.setEditable(false);
@@ -139,80 +136,34 @@ public class ManageUser extends BorderPane {
 	}
 	
 	public void deleteFunction() {
-		// confirmation dialog
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Cofirm");
-		alert.setHeaderText("Confirm Message");
-		alert.setContentText("Are you sure want to delete this?");
-		Optional<ButtonType> yes = alert.showAndWait();
-		// if user sure want to delete the user acocunt
-		if (yes.isPresent() && yes.get() == ButtonType.OK) {
-			// delete user from DB
+		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
 			Boolean status = userController.deleteUser(tempId);
-			
-			// if user has been deleted refresh the table
-			if(status) {
-				Alert alert2 = new Alert(AlertType.INFORMATION);
-				alert2.setTitle("Success");
-				alert2.setHeaderText("Success");
-				alert2.setContentText("Account has been deleted!");
-				Optional<ButtonType> result = alert2.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
-					System.out.println("The user clicked OK");
+			if(status ) {
+				if(dg.informationDialog("Success", "Success", "Account has been deleted!")) {
 					refreshTable();
 					nameTextField.clear();
 					emailTextField.clear();
-					role.getSelectionModel().clearSelection();
-				}	
-			// if error delete from the database display error message
+					role.getSelectionModel().clearSelection();					
+				}
 			} else {
-				Alert alert3 = new Alert(AlertType.INFORMATION);
-				alert3.setTitle("Message");
-				alert3.setHeaderText("Error message");
-				alert3.setContentText("Error to delete");
-				Optional<ButtonType> result = alert3.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
-					System.out.println("The user clicked OK");
-				}	
+				dg.informationDialog("Error Message", "Error to delete", "Error to delete from DB");
 			}
+			
 		}
 	}
 	
 	public void updateFunction() {
-		// confirmation dialog
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Cofirm");
-		alert.setHeaderText("Confirm Message");
-		alert.setContentText("Are you sure want to update this?");
-		Optional<ButtonType> yes = alert.showAndWait();
-		if (yes.isPresent() && yes.get() == ButtonType.OK) {
-			// update user from DB
+		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
 			Boolean status = userController.updateUser(tempId, role.getSelectionModel().getSelectedItem());
-			
-			// if user has been updated refresh the table
 			if(status) {
-				Alert alert2 = new Alert(AlertType.INFORMATION);
-				alert2.setTitle("Success");
-				alert2.setHeaderText("Success");
-				alert2.setContentText("Account has been updated!");
-				Optional<ButtonType> result = alert2.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
-					System.out.println("The user clicked OK");
+				if(dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
 					refreshTable();
 					nameTextField.clear();
 					emailTextField.clear();
 					role.getSelectionModel().clearSelection();
-				}	
-			// if error update from the database display error message
+				}
 			} else {
-				Alert alert3 = new Alert(AlertType.INFORMATION);
-				alert3.setTitle("Message");
-				alert3.setHeaderText("Error message");
-				alert3.setContentText("Error to delete");
-				Optional<ButtonType> result = alert3.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
-					System.out.println("The user clicked OK");
-				}	
+				dg.informationDialog("Error", "Error Message", "Fail to update user");
 			}
 		}
 	}

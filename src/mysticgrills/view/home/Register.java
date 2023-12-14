@@ -1,13 +1,9 @@
 package mysticgrills.view.home;
 
-import java.util.Optional;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -16,7 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.GlobalState;
 import mysticgrills.controller.UserController;
-import mysticgrills.view.user.ManageUser;
+import mysticgrills.utils.Dialog;
 
 public class Register extends BorderPane {
 
@@ -37,6 +33,7 @@ public class Register extends BorderPane {
 		Label passConfirm = new Label("Password Confirmation");
 		Button registerButton = new Button("Register");
 		Label changePage = new Label("Already have an account? Login");
+		Dialog dg = new Dialog();
 
 		container.getChildren().addAll(title, username, usernameField, email, emailField, pass, passField, passConfirm,
 				passConfirmField, registerButton, changePage);
@@ -46,24 +43,13 @@ public class Register extends BorderPane {
 			String status = userController.createUser("user", usernameField.getText(), emailField.getText(),
 					passField.getText(), passConfirmField.getText());
 
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Message");
-
 			if (status.contains("successfully")) {
-				alert.setHeaderText("Success");
-				alert.setContentText(status);
-				Optional<ButtonType> result = alert.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
+				if(dg.informationDialog("Message", "Success", status)) {
 					System.out.println("The user clicked OK");
 					stage.setScene(new Scene(new Login(stage), 1366, 768));
 				}
 			} else {
-				alert.setHeaderText("Error message");
-				alert.setContentText(status);
-				Optional<ButtonType> result = alert.showAndWait();
-				if (result.isPresent() && result.get() == ButtonType.OK) {
-					System.out.println("The user clicked OK");
-				}
+				dg.informationDialog("Error", "Error Message", status);
 			}
 		});
 

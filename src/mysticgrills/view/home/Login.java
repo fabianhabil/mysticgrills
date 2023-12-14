@@ -11,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mysticgrills.controller.UserController;
 import mysticgrills.utils.Dialog;
+import mysticgrills.view.menuitem.ManageMenuItem;
 import mysticgrills.view.user.ManageUser;
 
 public class Login extends BorderPane {
@@ -38,7 +39,7 @@ public class Login extends BorderPane {
 
 			if (status.contains("success")) {
 				if(dg.informationDialog("Success", "Success", status)) {
-					stage.setScene(new Scene(new ManageUser(stage), 1366, 768));					
+					stage.setScene(new Scene(new ManageMenuItem(stage), 1366, 768));					
 				}
 			} else {
 				dg.informationDialog("Fail", "Fail", status);

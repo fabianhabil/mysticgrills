@@ -148,17 +148,17 @@ public class ManageMenuItem extends BorderPane{
 	
 	public void deleteFunction() {
 		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
-//			Boolean status = menuItemCont.deleteUser(tempId);
-//			if(status ) {
-//				if(dg.informationDialog("Success", "Success", "Account has been deleted!")) {
-//					refreshTable();
-//					nameTextField.clear();
-//					emailTextField.clear();
-//					role.getSelectionModel().clearSelection();					
-//				}
-//			} else {
-//				dg.informationDialog("Error Message", "Error to delete", "Error to delete from DB");
-//			}
+			Boolean status = menuItemController.deleteMenuItem(tempId);
+			if(status ) {
+				if(dg.informationDialog("Success", "Success", "Menu Item has been deleted!")) {
+					refreshTable();
+					nameTextField.clear();
+					descTextField.clear();
+					priceTextField.clear();				
+				}
+			} else {
+				dg.informationDialog("Error Message", "Error to delete", "Error to delete from DB");
+			}
 			
 		}
 	}
@@ -190,7 +190,7 @@ public class ManageMenuItem extends BorderPane{
 		});
 		
 		deleteButton.setOnMouseClicked(e -> {
-//			deleteFunction();
+			deleteFunction();
 		});
 		
 		updateButton.setOnMouseClicked(e -> {

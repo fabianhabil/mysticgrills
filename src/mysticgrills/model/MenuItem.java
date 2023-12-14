@@ -91,6 +91,11 @@ public class MenuItem {
 		return menuItems;
 	}
 	
+	public Boolean deleteMenuItem(Integer menuItemId) {
+		String query = String.format("DELETE FROM `menuItems` WHERE `menuItemId` = \"%s\"", menuItemId);
+		return db.execute(query);
+	}
+	
 	public Integer getCountUniqueItemName(String menuItemName) {
 		String query = String.format("SELECT COUNT(`menuItemName`) FROM `menuItems` WHERE `menuItemName` = \"%s\"", menuItemName);
 		ResultSet rs = db.selectData(query);

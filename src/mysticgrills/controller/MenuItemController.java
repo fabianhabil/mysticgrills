@@ -57,6 +57,11 @@ public class MenuItemController {
 		return menuItem.createMenuItem(menuItemName, menuItemDescription, Double.parseDouble(menuItemPrice));
 	}
 	
+	public Boolean deleteMenuItem(Integer menuItemId) {
+		return menuItem.deleteMenuItem(menuItemId);
+		
+	}
+	
 	public ArrayList<MenuItem> getAllMenuItems() {
 		return menuItem.getAllMenuItems();
 	}

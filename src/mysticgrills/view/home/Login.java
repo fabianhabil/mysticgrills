@@ -39,7 +39,7 @@ public class Login extends BorderPane {
 
 			if (status.contains("success")) {
 				if(dg.informationDialog("Success", "Success", status)) {
-					stage.setScene(new Scene(new ManageMenuItem(stage), 1366, 768));					
+					stage.setScene(new Scene(new ManageUser(stage), 1366, 768));					
 				}
 			} else {
 				dg.informationDialog("Fail", "Fail", status);

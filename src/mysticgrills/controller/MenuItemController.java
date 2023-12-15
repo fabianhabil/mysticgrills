@@ -57,22 +57,20 @@ public class MenuItemController {
 		return menuItem.createMenuItem(menuItemName, menuItemDescription, Double.parseDouble(menuItemPrice));
 	}
 	
-	public String updateMenuItem(Integer menuItemId, String menuItemName, String menuItemDescription, String menuItemPrice) {
+	public String updateMenuItem(Integer menuItemId, String oldName, String menuItemName, String menuItemDescription, String menuItemPrice) {
 		Pattern regex = Pattern.compile("\\d+(\\.\\d+)?");
 
 		if(menuItemName.isBlank()) {
 			return "Menu Item Name cannot be empty";
 		}
 		
-//		if(!oldName.equals(menuItemName) || )
-		
-		// check if user 
-		// ganti nama ke username yang udh ada
-		// namanya tetep ga berubah
-		
-//		if(menuItem.getCountUniqueItemName(menuItemName) != 0) {
-//			return "Menu Item Name already in Database (Must be Unique)";
-//		}
+		// cek apakah ada nama di databsae
+		if(menuItem.getCountUniqueItemName(menuItemName) == 1) {
+			// tidak sama kaya nama yang dulu
+			if(!menuItemName.equals(oldName)) {
+				return "Menu Item Name already in Database (Must be Unique2)";
+			}			
+		}
 		
 		if(menuItemDescription.length() <= 10) {
 			return "Menu Item Desc must be more than 10 characters";

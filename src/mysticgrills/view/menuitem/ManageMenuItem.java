@@ -166,7 +166,7 @@ public class ManageMenuItem extends BorderPane{
 	
 	public void updateFunction() {
 		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
-			String status = menuItemController.updateMenuItem(tempId,nameTextField.getText(), descTextField.getText(), priceTextField.getText());
+			String status = menuItemController.updateMenuItem(tempId, menuItem.getMenuItemName(),nameTextField.getText(), descTextField.getText(), priceTextField.getText());
 			System.out.println(priceTextField.getText());
 			if(status.contains("success")) {
 				if(dg.informationDialog("Success", "Success Message", "Account has been updated!")) {

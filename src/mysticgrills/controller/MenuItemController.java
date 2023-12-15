@@ -26,7 +26,7 @@ public class MenuItemController {
 	}
 	
 	public String createMenuItem(String menuItemName, String menuItemDescription, String menuItemPrice) {
-		Pattern regex = Pattern.compile("^(?:\\d{1,2})?(?:\\.\\d{1,2})?");
+		Pattern regex = Pattern.compile("\\d+(\\.\\d+)?");
 		
 		if(menuItemName.isBlank()) {
 			return "Menu Item Name cannot be empty";
@@ -55,6 +55,48 @@ public class MenuItemController {
 		}
 		
 		return menuItem.createMenuItem(menuItemName, menuItemDescription, Double.parseDouble(menuItemPrice));
+	}
+	
+	public String updateMenuItem(Integer menuItemId, String menuItemName, String menuItemDescription, String menuItemPrice) {
+		Pattern regex = Pattern.compile("\\d+(\\.\\d+)?");
+
+		if(menuItemName.isBlank()) {
+			return "Menu Item Name cannot be empty";
+		}
+		
+//		if(!oldName.equals(menuItemName) || )
+		
+		// check if user 
+		// ganti nama ke username yang udh ada
+		// namanya tetep ga berubah
+		
+//		if(menuItem.getCountUniqueItemName(menuItemName) != 0) {
+//			return "Menu Item Name already in Database (Must be Unique)";
+//		}
+		
+		if(menuItemDescription.length() <= 10) {
+			return "Menu Item Desc must be more than 10 characters";
+		}
+		
+		if(menuItemPrice.isBlank()) {
+			return "Price cannot be empty";
+		}
+		
+		Matcher matcher = regex.matcher(menuItemPrice);
+
+		if (!matcher.matches()) {
+			return "Price must be number";
+		}
+		
+		if(Double.parseDouble(menuItemPrice) < 2.5) {
+			return "Menu Item Price must be more than or equal 2.5";
+		}
+		
+		if(menuItem.updateMenuItem(menuItemId, menuItemName, menuItemDescription, menuItemPrice)) {
+			return "Your menu item has been successfully updated!!";
+		} else {
+			return "Error update to DB";
+		}
 	}
 	
 	public Boolean deleteMenuItem(Integer menuItemId) {

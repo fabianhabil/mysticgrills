@@ -3,6 +3,7 @@ package mysticgrills.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import mysticgrills.DatabaseConnection;
 import mysticgrills.GlobalState;
@@ -12,7 +13,7 @@ public class MenuItem {
 	private Integer menuItemId;
 	private String menuItemName;
 	private String menuItemDescription;
-	private double menuItemPrice;
+	private Double menuItemPrice;
 	
 	private DatabaseConnection db = DatabaseConnection.getInstance();
 	private GlobalState global = GlobalState.getInstance();
@@ -21,7 +22,7 @@ public class MenuItem {
 		
 	}
 
-	public MenuItem(Integer menuItemId, String menuItemName, String menuItemDescription, double menuItemPrice) {
+	public MenuItem(Integer menuItemId, String menuItemName, String menuItemDescription, Double menuItemPrice) {
 		this.menuItemId = menuItemId;
 		this.menuItemName = menuItemName;
 		this.menuItemDescription = menuItemDescription;
@@ -52,15 +53,15 @@ public class MenuItem {
 		this.menuItemDescription = menuItemDescription;
 	}
 
-	public double getMenuItemPrice() {
+	public Double getMenuItemPrice() {
 		return menuItemPrice;
 	}
 
-	public void setMenuItemPrice(Float menuItemPrice) {
+	public void setMenuItemPrice(Double menuItemPrice) {
 		this.menuItemPrice = menuItemPrice;
 	}
 	
-	public String createMenuItem(String menuItemName, String menuItemDescription, double menuItemPrice) {
+	public String createMenuItem(String menuItemName, String menuItemDescription, Double menuItemPrice) {
 		String query = String.format("INSERT INTO `menuItems`(`menuItemName`, `menuItemDescription`, `menuItemPrice`) VALUES ('%s','%s','%s')", menuItemName, menuItemDescription, menuItemPrice);
 		if(!db.execute(query)) {
 			return "Error insert to DB";
@@ -78,7 +79,7 @@ public class MenuItem {
 				Integer id = rs.getInt("menuItemId");
 				String name = rs.getString("menuItemName");
 				String desc = rs.getString("menuItemDescription");
-				Float price = rs.getFloat("MenuItemPrice");
+				Double price = rs.getDouble("MenuItemPrice");
 				System.out.println(id + " " + name + " " + desc + " " + price);
 				menuItems.add(new MenuItem(id, name, desc, price));
 
@@ -87,8 +88,12 @@ public class MenuItem {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return menuItems;
+	}
+	
+	public Boolean updateMenuItem(Integer menuItemId, String menuItemName, String menuItemDescription, String menuItemPrice) {
+		String query = String.format("UPDATE `menuItems` SET `menuItemName`=\"%s\",`menuItemDescription`=\"%s\",`menuItemPrice`= \"%s\" WHERE `menuItemId`=\"%s\"", menuItemName, menuItemDescription, menuItemPrice, menuItemId);
+		return db.execute(query);
 	}
 	
 	public Boolean deleteMenuItem(Integer menuItemId) {

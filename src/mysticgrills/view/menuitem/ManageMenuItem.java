@@ -38,6 +38,7 @@ public class ManageMenuItem extends BorderPane{
 	Label nameLbl, descLbl, priceLbl;
 	Dialog dg;
 	Integer tempId;
+	MenuItem menuItem;
 
 	private MenuItemController menuItemController = MenuItemController.getMC();
 
@@ -116,7 +117,7 @@ public class ManageMenuItem extends BorderPane{
 				TableSelectionModel<MenuItem> tableSelectionModel = viewMenuItem.getSelectionModel();
 				tableSelectionModel.setSelectionMode(SelectionMode.SINGLE);
 				// get data from selected model
-				MenuItem menuItem = tableSelectionModel.getSelectedItem();
+				menuItem = tableSelectionModel.getSelectedItem();
 				
 				// display data in textfield and combobox
 				if(menuItem != null) {
@@ -165,17 +166,18 @@ public class ManageMenuItem extends BorderPane{
 	
 	public void updateFunction() {
 		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
-//			Boolean status = userController.updateUser(tempId, role.getSelectionModel().getSelectedItem());
-//			if(status) {
-//				if(dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
-//					refreshTable();
-//					nameTextField.clear();
-//					emailTextField.clear();
-//					role.getSelectionModel().clearSelection();
-//				}
-//			} else {
-//				dg.informationDialog("Error", "Error Message", "Fail to update user");
-//			}
+			String status = menuItemController.updateMenuItem(tempId,nameTextField.getText(), descTextField.getText(), priceTextField.getText());
+			System.out.println(priceTextField.getText());
+			if(status.contains("success")) {
+				if(dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
+					refreshTable();
+					nameTextField.clear();
+					descTextField.clear();
+					priceTextField.clear();	
+				}
+			} else {
+				dg.informationDialog("Error", "Error Message", status);
+			}
 		}
 	}
 
@@ -194,7 +196,7 @@ public class ManageMenuItem extends BorderPane{
 		});
 		
 		updateButton.setOnMouseClicked(e -> {
-//			updateFunction();
+			updateFunction();
 		});
 	}
 

@@ -31,7 +31,7 @@ CREATE TABLE `menuItems` (
   `menuItemId` int(11) NOT NULL,
   `menuItemName` varchar(100) NOT NULL,
   `menuItemDescription` varchar(255) NOT NULL,
-  `menuItemPrice` float NOT NULL
+  `menuItemPrice` double NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

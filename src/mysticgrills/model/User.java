@@ -90,7 +90,7 @@ public class User {
 					System.out.println(
 							rs.getInt(1) + rs.getString(2) + rs.getString(3) + rs.getString(4) + rs.getString(5));
 					global.addUser(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
-					return "Login success";
+					return "Login Success";
 				}
 			}
 		} catch (SQLException e) {
@@ -99,14 +99,14 @@ public class User {
 		}
 		return "Username or Password wrong";
 	}
-	
+
 	public Boolean updateUser(Integer userId, String newUserRole) {
-		String query = String.format("UPDATE `users` SET `userRole`= \"%s\" WHERE `userId` = \"%s\"", newUserRole, userId);
+		String query = String.format("UPDATE `users` SET `userRole`= \"%s\" WHERE `userId` = \"%s\"", newUserRole,
+				userId);
 		return db.execute(query);
 	}
-	
+
 	public Boolean deleteUser(Integer userId) {
-		
 		String query = String.format("DELETE FROM `users` WHERE `userId` = \"%s\"", userId);
 		return db.execute(query);
 	}

@@ -2,7 +2,7 @@ package mysticgrills.view.order;
 
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,45 +42,33 @@ import mysticgrills.model.OrderItem;
 import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.home.CustomerHome;
+import mysticgrills.view.home.KitchenHome;
 
 public class ViewOrder extends BorderPane {
 
 	VBox container, topContainer, titleContainer, buttonContainer, cartContainer;
 	HBox buttonBox, tableCart;
 	ScrollPane containerTable;
-	ScrollPane scrollableCart;
 	TableView<Order> viewOrder;
 	ArrayList<Order> orders;
-	Button addCartButton, calculateButton, createOrderButton, backButton;
+	Button processOrderButton, deleteButton, updateOrderButton, backButton;
 	GridPane formBox;
-	TextField quantityTextField;
-	Label nameLbl, quantityLbl, priceLbl, totalLbl;
 	Dialog dg;
-	Text title, cartTitle, itemName, itemPrice, itemTotal, grandTotal;
+	Text title;
 	int total;
 
 	private OrderController orderController = OrderController.getInstance();
-	private OrderItemController orderItemController = OrderItemController.getInstance();
 	private GlobalState globalState = GlobalState.getInstance();
 
 	// We will use hashmap for temporary cart system, since we dont want two items
 	// with two different quantity for better complexity and looping behaviour
 //	private HashMap<Integer, Order> newOrderItems;
-//	private MenuItem menuItemSelected;
+	private Order orderSelected;
 
 	public void initialize() {
-//		newOrderItems = new HashMap<Integer, OrderItem>();
 
-		scrollableCart = new ScrollPane();
 		containerTable = new ScrollPane();
-
 		formBox = new GridPane();
-		nameLbl = new Label("Name");
-		quantityLbl = new Label("Quantity");
-		priceLbl = new Label("Price");
-		totalLbl = new Label("Total");
-
-		quantityTextField = new TextField();
 
 		topContainer = new VBox(8);
 		container = new VBox(8);
@@ -90,33 +78,52 @@ public class ViewOrder extends BorderPane {
 		tableCart = new HBox(16);
 		cartContainer = new VBox(8);
 
-		addCartButton = new Button("Add To Cart");
-		calculateButton = new Button("Calculate Price");
-		createOrderButton = new Button("Create Order");
+		deleteButton = new Button("Delete");
+		updateOrderButton = new Button("Update");
 		backButton = new Button("Back");
-
-		title = new Text("View Order");
-		cartTitle = new Text("Your Cart");
-		itemName = new Text("");
-		itemPrice = new Text("");
-		itemTotal = new Text("");
-		grandTotal = new Text("");
 
 		viewOrder = new TableView<Order>();
 		orders = new ArrayList<Order>();
 		dg = new Dialog();
 
-		setTable();
+		if (globalState.getCurrentLoggedInUser().getUserRole().equals("Chef")) {
+			initChef();
+		}
+
+		if (globalState.getCurrentLoggedInUser().getUserRole().equals("Waiter")) {
+			initWaiter();
+		}
+
+		if (globalState.getCurrentLoggedInUser().getUserRole().equals("Cashier")) {
+			initCashier();
+		}
 
 		total = 0;
+	}
+
+	// set init for waiter
+	public void initWaiter() {
+		title = new Text("View Prepared Order");
+		processOrderButton = new Button("Serve Order");
+		setTableForWaiterandChef();
+	}
+
+	// set init for chef
+	public void initChef() {
+		title = new Text("View Pending Order");
+		processOrderButton = new Button("Prepare Order");
+		setTableForWaiterandChef();
+	}
+
+	public void initCashier() {
+		title = new Text("View Order");
+		processOrderButton = new Button("Pay Order");
+		setTableForCashier();
 	}
 
 	public void style() {
 		title.setFont(new Font(24));
 		title.setTextAlignment(TextAlignment.CENTER);
-		cartTitle.setFont(new Font(18));
-		cartTitle.setTextAlignment(TextAlignment.CENTER);
-		cartTitle.minWidth(600);
 
 		titleContainer.getChildren().add(title);
 		titleContainer.setAlignment(Pos.CENTER);
@@ -125,28 +132,19 @@ public class ViewOrder extends BorderPane {
 		viewOrder.setPadding(new Insets(10, 10, 10, 10));
 
 		formBox.setPadding(new Insets(10, 10, 10, 10));
-		formBox.add(nameLbl, 0, 0);
-		formBox.add(quantityLbl, 0, 1);
-		formBox.add(priceLbl, 0, 2);
-		formBox.add(totalLbl, 0, 3);
 
 		formBox.setHgap(100);
 		formBox.setVgap(10);
-
-		formBox.add(itemName, 1, 0);
-		formBox.add(quantityTextField, 1, 1);
-		formBox.add(itemPrice, 1, 2);
-		formBox.add(itemTotal, 1, 3);
 
 		formBox.setAlignment(Pos.CENTER);
 
 		formBox.setVisible(false);
 
-		addCartButton.setMinWidth(150);
-		calculateButton.setMinWidth(150);
-		createOrderButton.setMinWidth(350);
+		processOrderButton.setMinWidth(150);
+		deleteButton.setMinWidth(150);
+		updateOrderButton.setMinWidth(150);
 
-		buttonBox.getChildren().addAll(addCartButton, calculateButton);
+		buttonBox.getChildren().addAll(processOrderButton, updateOrderButton, deleteButton);
 		buttonBox.setAlignment(Pos.CENTER);
 
 		containerTable.setContent(viewOrder);
@@ -157,37 +155,28 @@ public class ViewOrder extends BorderPane {
 		buttonContainer.getChildren().setAll(buttonBox, backButton);
 		buttonContainer.setAlignment(Pos.CENTER);
 
-		tableCart.getChildren().setAll(containerTable, scrollableCart);
+		tableCart.getChildren().setAll(containerTable);
 		tableCart.setAlignment(Pos.CENTER);
 
-		cartContainer.getChildren().setAll(cartTitle);
 		cartContainer.setMinWidth(500);
-
-		scrollableCart.setContent(cartContainer);
-		scrollableCart.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scrollableCart.setMinWidth(500);
-		scrollableCart.setFitToWidth(true);
-		scrollableCart.setMaxHeight(500);
-		scrollableCart.getStyleClass().clear();
 
 		container.getChildren().setAll(titleContainer, tableCart, formBox, buttonContainer);
 		container.setPadding(new Insets(16));
 
 	}
 
-	public void setTable() {
+	public void setTableForWaiterandChef() {
 		TableColumn<Order, Integer> idColumn = new TableColumn<Order, Integer>("ID");
 		TableColumn<Order, String> nameColumn = new TableColumn<Order, String>("User Name");
 		TableColumn<Order, String> statusColumn = new TableColumn<Order, String>("Status");
-		TableColumn<Order, Double> priceColumn = new TableColumn<Order, Double>("Total Price");
+		TableColumn<Order, Date> dateColumn = new TableColumn<Order, Date>("Order Date");
 
-		viewOrder.getColumns().addAll(idColumn, nameColumn, statusColumn, priceColumn);
+		viewOrder.getColumns().addAll(idColumn, nameColumn, statusColumn, dateColumn);
 
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
 
 		// Accessing value in nested objects, we need to make custom for the
-		// PropertyValueFactory, example code is obtained from StackOverflow and
-		// implemented based on the usage
+		// PropertyValueFactory
 		nameColumn.setCellValueFactory(
 				new Callback<TableColumn.CellDataFeatures<Order, String>, ObservableValue<String>>() {
 					@Override
@@ -197,7 +186,36 @@ public class ViewOrder extends BorderPane {
 					}
 				});
 		statusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
+		dateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
+
+		refreshTable();
+	}
+
+	public void setTableForCashier() {
+		TableColumn<Order, Integer> idColumn = new TableColumn<Order, Integer>("ID");
+		TableColumn<Order, String> nameColumn = new TableColumn<Order, String>("User Name");
+		TableColumn<Order, String> statusColumn = new TableColumn<Order, String>("Status");
+		TableColumn<Order, Double> priceColumn = new TableColumn<Order, Double>("Total Price");
+		TableColumn<Order, Date> dateColumn = new TableColumn<Order, Date>("Order Date");
+
+		viewOrder.getColumns().addAll(idColumn, nameColumn, statusColumn, dateColumn, priceColumn);
+
+		idColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
+
+		// Accessing value in nested objects, we need to make custom for the
+		// PropertyValueFactory
+		nameColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Order, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(TableColumn.CellDataFeatures<Order, String> param) {
+						return new SimpleObjectProperty<>(param.getValue().getOrderUser().getUserName());
+
+					}
+				});
+
+		statusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
 		priceColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotal"));
+		dateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
 
 		refreshTable();
 	}
@@ -207,187 +225,97 @@ public class ViewOrder extends BorderPane {
 		viewOrder.getItems().clear();
 		viewOrder.getItems().addAll(orders);
 
-//		viewOrder.setOnMouseClicked(tableMouseEvent());
+		viewOrder.setOnMouseClicked(tableMouseEvent());
 	}
 
-	// Iterate through the hashmap and render all the items in cart
-//	public void refreshCart() {
-//		cartContainer.getChildren().setAll(cartTitle);
-//		Text grandTotal = new Text("");
-//
-//		for (Integer id : newOrderItems.keySet()) {
-//			VBox container = new VBox(4);
-//
-//			OrderItem item = newOrderItems.get(id);
-//			MenuItem menu = item.getMenuItem();
-//			Button deleteMenu = new Button("Delete Item");
-//
-//			container.maxWidth(350);
-//
-//			Text name = new Text("Menu Name: " + menu.getMenuItemName());
-//			Text quantity = new Text("Quantity: " + item.getQuantity() + " pcs");
-//			Text price = new Text("Price: Rp " + menu.getMenuItemPrice());
-//			Text totalText = new Text("Total: Rp " + (item.getQuantity() * menu.getMenuItemPrice()));
-//
-//			// Remove items from the hashmap and rerender the cart
-//			deleteMenu.setOnMouseClicked(e -> {
-//				// Count the grand total of the cart
-//				total = (int) (total - menu.getMenuItemPrice() * item.getQuantity());
-//
-//				newOrderItems.remove(id);
-//				refreshCart();
-//			});
-//
-//			container.getChildren().addAll(name, quantity, price, totalText, deleteMenu);
-//
-//			cartContainer.getChildren().add(container);
-//		}
-//
-//		grandTotal.setText("Grand Total of the Cart: Rp " + total);
-//		grandTotal.setFont(new Font(16));
-//
-//		cartContainer.getChildren().addAll(grandTotal, createOrderButton);
-//	}
-
 	// to handle if user press a row in table
-//	private EventHandler<MouseEvent> tableMouseEvent() {
-//		return new EventHandler<MouseEvent>() {
-//
-//			// get user data from pressed table row
-//			@Override
-//			public void handle(MouseEvent event) {
-//				TableSelectionModel<MenuItem> tableSelectionModel = viewMenuItem.getSelectionModel();
-//				tableSelectionModel.setSelectionMode(SelectionMode.SINGLE);
-//
-//				// get data from selected model
-//				// hide first the calculate price x quantity because if clicked, reset the
-//				// quantity
-//				menuItemSelected = tableSelectionModel.getSelectedItem();
-//				quantityTextField.setText("");
-//				totalLbl.setVisible(false);
-//				itemTotal.setVisible(false);
-//
-//				// display data in box to notice if user want to add to cart or no
-//				if (menuItemSelected != null) {
-//					itemName.setText(menuItemSelected.getMenuItemName());
-//					itemPrice.setText(menuItemSelected.getMenuItemPrice().toString());
-//					formBox.setVisible(true);
-//				}
-//
-//			}
-//		};
-//	}
+	private EventHandler<MouseEvent> tableMouseEvent() {
+		return new EventHandler<MouseEvent>() {
 
-//	public void eventListener(Stage stage) {
-//		// create the order and save all the order item to the database
-//		createOrderButton.setOnMouseClicked(e -> {
-//			long millis = System.currentTimeMillis();
-//			Date date = new java.sql.Date(millis);
-//			int newOrderId = orderController.createOrder(globalState.getCurrentLoggedInUser(), date);
-//
-//			for (Integer id : newOrderItems.keySet()) {
-//				OrderItem item = newOrderItems.get(id);
-//				MenuItem menu = item.getMenuItem();
-//
-//				Boolean isSuccess = orderItemController.createOrderItem(newOrderId, menu, item.getQuantity());
-//
-//				if (!isSuccess) {
-//					dg.informationDialog("Error", "Error Message", "Error adding new order!");
-//					return;
-//				}
-//			}
-//
-//			if (dg.informationDialog("Success", "Success", "Order Created!")) {
-//				stage.setScene(new Scene(new CustomerHome(stage), 1366, 768));
-//			}
-//		});
-//
-//		// add selected item and quantity that user input to the cart
-//		addCartButton.setOnMouseClicked(e -> {
-//			Boolean quantityValidated = validateQuantity(quantityTextField.getText());
-//
-//			if (menuItemSelected == null) {
-//				dg.informationDialog("Error", "Error Message", "Please choose an item first!");
-//			}
-//
-//			else {
-//				if (quantityValidated) {
-//					// Input from quantity textfield is a number and we add to cart
-//					int quantity = Integer.parseInt(quantityTextField.getText());
-//
-//					if (quantity == 0) {
-//						dg.informationDialog("Error", "Error Message", "Quantity cant be 0!");
-//						return;
-//					}
-//
-//					OrderItem orderItem = newOrderItems.get(menuItemSelected.getMenuItemId());
-//
-//					if (orderItem != null) {
-//						quantity += orderItem.getQuantity();
-//					}
-//
-//					OrderItem newOrderItem = new OrderItem(menuItemSelected.getMenuItemId(), menuItemSelected,
-//							quantity);
-//
-//					newOrderItems.put(menuItemSelected.getMenuItemId(), newOrderItem);
-//
-//					// Reset the form box and the selected item after add to cart
-//					quantityTextField.setText("");
-//					itemName.setText("");
-//					itemPrice.setText("");
-//					formBox.setVisible(false);
-//					menuItemSelected = null;
-//
-//					// Count the grand total of the cart
-//					total += newOrderItem.getMenuItem().getMenuItemPrice() * newOrderItem.getQuantity();
-//
-//					// Refresh the cart
-//					refreshCart();
-//				} else {
-//					// Input from quantity textfield is invalid, return notice error
-//					dg.informationDialog("Error", "Error Message", "Quantity cant be empty and must be a number!");
-//				}
-//			}
-//		});
-//
-//		// Calculate Button Listener
-//		calculateButton.setOnMouseClicked(e -> {
-//			Boolean quantityValidated = validateQuantity(quantityTextField.getText());
-//
-//			if (quantityValidated) {
-//				// Input from quantity textfield is a number and we show the calculated price
-//				Double total = Integer.parseInt(quantityTextField.getText()) * menuItemSelected.getMenuItemPrice();
-//				itemTotal.setText(total.toString());
-//				totalLbl.setVisible(true);
-//				itemTotal.setVisible(true);
-//			} else {
-//				// Input from quantity textfield is invalid, return notice error
-//				dg.informationDialog("Error", "Error Message", "Quantity cant be empty and must be a number!");
-//			}
-//
-//		});
-//
-//		// Back to home customer menu
-//		backButton.setOnMouseClicked(e -> {
-//			stage.setScene(new Scene(new CustomerHome(stage), 1366, 768));
-//		});
-//	}
+			// get order data from pressed table row
+			@Override
+			public void handle(MouseEvent event) {
+				TableSelectionModel<Order> tableSelectionModel = viewOrder.getSelectionModel();
+				tableSelectionModel.setSelectionMode(SelectionMode.SINGLE);
 
-	// Helper to check if quantity not empty and must be a number
-//	public boolean validateQuantity(String input) {
-//		Pattern regex = Pattern.compile("\\d+(\\.\\d+)?");
-//		if (!input.isBlank()) {
-//			Matcher matcher = regex.matcher(input);
-//			return matcher.matches();
-//		}
-//		return false;
-//	}
+				// get data from selected model
+				orderSelected = tableSelectionModel.getSelectedItem();
+
+				if (orderSelected != null) {
+					System.out.println(orderSelected.getOrderId().toString());
+				}
+
+			}
+		};
+	}
+
+	public void eventListener(Stage stage) {
+		// Process Order Listener
+		processOrderButton.setOnMouseClicked(e -> {
+			if (orderSelected == null) {
+				dg.informationDialog("Information", "Information", "Choose the data");
+			} else {
+				// confirmation to delete the data
+				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String.format(
+						"Are you sure you want to process this order (OrderId: %d)?", orderSelected.getOrderId()));
+
+				// if user click sure to delete the data
+				if (confirmationDelete) {
+//					System.out.println("Yes");
+					if(orderController.updateOrder(globalState.getCurrentLoggedInUser().getUserRole(), orderSelected.getOrderId())) {
+						dg.informationDialog("Information", "Information", "Process Order");
+						refreshTable();
+					}
+				}
+			}
+		});
+
+		// Update Order Listener
+		updateOrderButton.setOnMouseClicked(e -> {
+			if (orderSelected == null) {
+				dg.informationDialog("Information", "Information", "Choose the data");
+			} else {
+				// confirmation to delete the data
+				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String.format(
+						"Are you sure you want to update this order (OrderId: %d)?", orderSelected.getOrderId()));
+
+				// if user click sure to delete the data
+				if (confirmationDelete) {
+					System.out.println("Yes");
+				}
+			}
+		});
+
+		// Delete Button Listener
+		deleteButton.setOnMouseClicked(e -> {
+
+			// if user not choose the data
+			if (orderSelected == null) {
+				dg.informationDialog("Information", "Information", "Choose the data");
+			} else {
+				// confirmation to delete the data
+				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation",
+						"Are you sure you want to delete this Order?");
+
+				// if user click sure to delete the data
+				if (confirmationDelete) {
+					System.out.println("Yes");
+				}
+			}
+
+		});
+
+		// Back to home customer menu
+		backButton.setOnMouseClicked(e -> {
+			stage.setScene(new Scene(new KitchenHome(stage), 1366, 768));
+		});
+	}
 
 	public ViewOrder(Stage stage) {
 		stage.setTitle("View Order");
 		initialize();
 		style();
-//		eventListener(stage);
+		eventListener(stage);
 		setCenter(container);
 	}
 

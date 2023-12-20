@@ -102,8 +102,8 @@ public class Login extends BorderPane {
 		else if (user.getUserRole().equals("Admin")) {
 			bp = new AdminHome(stage);
 		}
-		
-		else if (user.getUserRole().equals("Chef")) {
+
+		else if (user.getUserRole().equals("Chef") || user.getUserRole().equals("Waiter") || user.getUserRole().equals("Cashier")) {
 			bp = new KitchenHome(stage);
 		}
 

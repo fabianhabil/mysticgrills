@@ -34,9 +34,13 @@ public class OrderController {
 
 		return orderId;
 	}
-	
+
 	public ArrayList<Order> getAllOrders(String role) {
 		return order.getAllOrders(role);
+	}
+	
+	public Boolean updateOrder(String role, Integer orderId) {
+		return order.updateOrder(role, orderId);
 	}
 
 }

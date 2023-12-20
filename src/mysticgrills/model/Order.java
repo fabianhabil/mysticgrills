@@ -132,6 +132,16 @@ public class Order {
 					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Pending\"");
 		}
 
+		if (role.equals("Waiter")) {
+			rs = db.selectData(
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Prepared\"");
+		}
+		
+		if(role.equals("Cashier")) {
+			rs = db.selectData(
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Served\"");
+		}
+
 		try {
 			while (rs.next()) {
 				Integer id = rs.getInt("orderId");
@@ -153,6 +163,24 @@ public class Order {
 		}
 
 		return orders;
+	}
+	
+	public Boolean updateOrder(String role, Integer orderId) {
+		
+		String query = null;
+		
+		if (role.equals("Chef")) {
+			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Prepared",
+					orderId.toString());
+		} else if (role.equals("Waiter")) {
+			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Served",
+					orderId.toString());
+		} else if(role.equals("Cashier")) {
+			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Paid",
+					orderId.toString());
+		}
+		
+		return db.execute(query);
 	}
 
 }

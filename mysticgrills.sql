@@ -41,9 +41,10 @@ CREATE TABLE `menuItems` (
 --
 
 CREATE TABLE `orderItems` (
+  `orderItemId` int(11) NOT NULL,
   `orderId` int(11) NOT NULL,
   `menuItem` int(11) NOT NULL,
-  `quanitity` int(11) NOT NULL
+  `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -57,7 +58,7 @@ CREATE TABLE `orders` (
   `orderUser` int(11) NOT NULL,
   `orderStatus` varchar(50) NOT NULL,
   `orderDate` date NOT NULL DEFAULT current_timestamp(),
-  `orderTotal` int(11) NOT NULL
+  `orderTotal` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -102,7 +103,7 @@ ALTER TABLE `menuItems`
 -- Indexes for table `orderItems`
 --
 ALTER TABLE `orderItems`
-  ADD PRIMARY KEY (`orderId`),
+  ADD PRIMARY KEY (`orderItemId`),
   ADD KEY `fk_orderItem_menuItem` (`menuItem`);
 
 --
@@ -133,7 +134,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `menuItems`
 --
 ALTER TABLE `menuItems`
-  MODIFY `menuItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `menuItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `menuItems`
+--
+ALTER TABLE `orderItems`
+  MODIFY `orderItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -176,6 +183,11 @@ ALTER TABLE `orders`
 ALTER TABLE `receipts`
   ADD CONSTRAINT `fk_receipt_order` FOREIGN KEY (`receiptOrder`) REFERENCES `orders` (`orderId`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
+
+--
+-- Seeder for account admin
+--
+INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('Admin','admin','admin','admin')
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

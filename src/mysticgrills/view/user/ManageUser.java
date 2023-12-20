@@ -167,6 +167,11 @@ public class ManageUser extends BorderPane {
 	}
 
 	public void deleteFunction() {
+		if (tempId == null) {
+			dg.informationDialog("Error", "Error Message", "Please select an user first!");
+			return;
+		}
+
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
 			Boolean status = userController.deleteUser(tempId);
 			if (status) {

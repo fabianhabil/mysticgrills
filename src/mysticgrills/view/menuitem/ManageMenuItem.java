@@ -178,6 +178,11 @@ public class ManageMenuItem extends BorderPane {
 
 	// Delete menu item from database
 	public void deleteFunction() {
+		if (tempId == null) {
+			dg.informationDialog("Error", "Error Message", "Please select a Menu Item first!");
+			return;
+		}
+
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
 			Boolean status = menuItemController.deleteMenuItem(tempId);
 			if (status) {
@@ -186,6 +191,8 @@ public class ManageMenuItem extends BorderPane {
 					nameTextField.clear();
 					descTextField.clear();
 					priceTextField.clear();
+					tempId = null;
+					menuItem = null;
 				}
 			} else {
 				dg.informationDialog("Error Message", "Error to delete", "Error to delete from DB");
@@ -196,16 +203,23 @@ public class ManageMenuItem extends BorderPane {
 
 	// Update menu item from database
 	public void updateFunction() {
+		if (tempId == null) {
+			dg.informationDialog("Error", "Error Message", "Please select a Menu Item first!");
+			return;
+		}
+
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
 			String status = menuItemController.updateMenuItem(tempId, menuItem.getMenuItemName(),
 					nameTextField.getText(), descTextField.getText(), priceTextField.getText());
 
 			if (status.contains("success")) {
-				if (dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
+				if (dg.informationDialog("Success", "Success Message", "Menu Item has been updated!")) {
 					refreshTable();
 					nameTextField.clear();
 					descTextField.clear();
 					priceTextField.clear();
+					tempId = null;
+					menuItem = null;
 				}
 			} else {
 				dg.informationDialog("Error", "Error Message", status);

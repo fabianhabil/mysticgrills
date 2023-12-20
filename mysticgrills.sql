@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `mysticgrills2``
+-- Database: `mysticgrills`
 --
 
 -- --------------------------------------------------------
@@ -187,7 +187,7 @@ COMMIT;
 --
 -- Seeder for account admin
 --
-INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('Admin','admin','admin','admin')
+INSERT INTO `users`(`userRole`, `userName`, `userEmail`, `userPassword`) VALUES ('Admin','admin','admin','admin');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

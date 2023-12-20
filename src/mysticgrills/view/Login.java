@@ -17,6 +17,7 @@ import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.home.AdminHome;
 import mysticgrills.view.home.CustomerHome;
+import mysticgrills.view.home.KitchenHome;
 import mysticgrills.view.user.ManageUser;
 
 public class Login extends BorderPane {
@@ -100,6 +101,10 @@ public class Login extends BorderPane {
 
 		else if (user.getUserRole().equals("Admin")) {
 			bp = new AdminHome(stage);
+		}
+		
+		else if (user.getUserRole().equals("Chef")) {
+			bp = new KitchenHome(stage);
 		}
 
 		else {

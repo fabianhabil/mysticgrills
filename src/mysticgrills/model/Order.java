@@ -30,6 +30,15 @@ public class Order {
 		this.orderDate = orderDate;
 		this.orderTotal = orderTotal;
 	}
+	
+	public Order(Integer orderId, User orderUser, String orderStatus, Date orderDate,
+			Integer orderTotal) {
+		this.orderId = orderId;
+		this.orderUser = orderUser;
+		this.orderStatus = orderStatus;
+		this.orderDate = orderDate;
+		this.orderTotal = orderTotal;
+	}
 
 	public Order() {
 
@@ -111,6 +120,42 @@ public class Order {
 		}
 
 		return -1;
+	}
+
+	public ArrayList<Object> getAllOrders(String role) {
+		// TODO Auto-generated method stub
+		ArrayList<Object> orders = new ArrayList<>();
+		
+		ResultSet rs = null;
+		
+		if(role.equals("Chef")) {
+			rs = db.selectData("SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Pending\"");
+		}
+
+
+		try {
+			while (rs.next()) {
+				Integer id = rs.getInt("orderId");
+				String status = rs.getString("OrderStatus");
+				Date date = rs.getDate("OrderDate");
+				Integer total = rs.getInt("orderTotal");
+				Integer userId = rs.getInt("userId");
+				String userRole  = rs.getString("userRole");
+				String userName = rs.getString("userName");
+				String userEmail = rs.getString("userEmail");
+				System.out.println("order: " +id + " " + status + " " + date + " " + total);
+				System.out.println("user: " + userId + " " + userRole + " " + userName + " " + userEmail);
+//				User user = new User(userId, userRole, userName, userEmail);
+//				orders.add(new Order(id, user, status, date, total));
+				orders.add();
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return orders;
 	}
 
 }

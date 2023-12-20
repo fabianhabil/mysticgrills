@@ -1,6 +1,7 @@
 package mysticgrills.controller;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 import mysticgrills.DatabaseConnection;
 import mysticgrills.model.Order;
@@ -32,6 +33,11 @@ public class OrderController {
 		int orderId = order.createOrder(orderUser, orderDate);
 
 		return orderId;
+	}
+	
+	public ArrayList<Object> getAllOrders(String role) {
+		
+		return order.getAllOrders(role);
 	}
 
 }

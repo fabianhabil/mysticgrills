@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,6 +31,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import mysticgrills.GlobalState;
 import mysticgrills.controller.MenuItemController;
 import mysticgrills.controller.OrderController;
@@ -46,8 +49,8 @@ public class ViewOrder extends BorderPane {
 	HBox buttonBox, tableCart;
 	ScrollPane containerTable;
 	ScrollPane scrollableCart;
-	TableView<Object> viewOrder;
-	ArrayList<Object> orders;
+	TableView<Order> viewOrder;
+	ArrayList<Order> orders;
 	Button addCartButton, calculateButton, createOrderButton, backButton;
 	GridPane formBox;
 	TextField quantityTextField;
@@ -99,8 +102,8 @@ public class ViewOrder extends BorderPane {
 		itemTotal = new Text("");
 		grandTotal = new Text("");
 
-		viewOrder = new TableView<Object>();
-		orders = new ArrayList<Object>();
+		viewOrder = new TableView<Order>();
+		orders = new ArrayList<Order>();
 		dg = new Dialog();
 
 		setTable();
@@ -171,19 +174,28 @@ public class ViewOrder extends BorderPane {
 		container.setPadding(new Insets(16));
 
 	}
-	
+
 	public void setTable() {
-		TableColumn<Object, Integer> idColumn = new TableColumn<Object, Integer>("ID");
-		TableColumn<Object, User> nameColumn = new TableColumn<Object, User>("User Name");
-		TableColumn<Object, String> statusColumn = new TableColumn<Object, String>("Status");
-		TableColumn<Object, Double> priceColumn = new TableColumn<Object, Double>("Total Price");
+		TableColumn<Order, Integer> idColumn = new TableColumn<Order, Integer>("ID");
+		TableColumn<Order, String> nameColumn = new TableColumn<Order, String>("User Name");
+		TableColumn<Order, String> statusColumn = new TableColumn<Order, String>("Status");
+		TableColumn<Order, Double> priceColumn = new TableColumn<Order, Double>("Total Price");
 
 		viewOrder.getColumns().addAll(idColumn, nameColumn, statusColumn, priceColumn);
-		
-//		viewOrder.getColumns().addAll(idColumn, statusColumn, priceColumn);
 
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
-		nameColumn.setCellValueFactory(new PropertyValueFactory<>("orderUser"));
+
+		// Accessing value in nested objects, we need to make custom for the
+		// PropertyValueFactory, example code is obtained from StackOverflow and
+		// implemented based on the usage
+		nameColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Order, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(TableColumn.CellDataFeatures<Order, String> param) {
+						return new SimpleObjectProperty<>(param.getValue().getOrderUser().getUserName());
+
+					}
+				});
 		statusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
 		priceColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotal"));
 
@@ -194,6 +206,7 @@ public class ViewOrder extends BorderPane {
 		orders = orderController.getAllOrders(globalState.getCurrentLoggedInUser().getUserRole());
 		viewOrder.getItems().clear();
 		viewOrder.getItems().addAll(orders);
+
 //		viewOrder.setOnMouseClicked(tableMouseEvent());
 	}
 

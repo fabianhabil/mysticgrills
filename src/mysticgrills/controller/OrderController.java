@@ -35,8 +35,7 @@ public class OrderController {
 		return orderId;
 	}
 	
-	public ArrayList<Object> getAllOrders(String role) {
-		
+	public ArrayList<Order> getAllOrders(String role) {
 		return order.getAllOrders(role);
 	}
 

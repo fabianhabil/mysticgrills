@@ -74,6 +74,9 @@ public class ManageMenuItem extends BorderPane {
 		menuItems = new ArrayList<MenuItem>();
 		dg = new Dialog();
 
+	}
+
+	public void style() {
 		title.setFont(new Font(24));
 		title.setTextAlignment(TextAlignment.CENTER);
 		titleContainer.getChildren().add(title);
@@ -230,11 +233,9 @@ public class ManageMenuItem extends BorderPane {
 
 	public ManageMenuItem(Stage stage) {
 		stage.setTitle("Manage Menu Item");
-
 		initialize();
-
+		style();
 		setCenter(container);
-
 		eventListener(stage);
 
 	}

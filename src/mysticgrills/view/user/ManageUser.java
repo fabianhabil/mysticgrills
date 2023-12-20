@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -20,18 +21,23 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import mysticgrills.controller.UserController;
 import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
+import mysticgrills.view.home.AdminHome;
 
 public class ManageUser extends BorderPane {
 
-	ScrollPane container;
+	VBox container, titleContainer, buttonContainer;
+	ScrollPane containerTable;
 	TableView<User> viewUser;
 	ArrayList<User> users;
-	Button updateButton;
-	Button deleteButton;
+	Button updateButton, deleteButton, backButton;
 	GridPane formBox;
 	HBox buttonBox;
 	TextField nameTextField, emailTextField;
@@ -39,11 +45,12 @@ public class ManageUser extends BorderPane {
 	ComboBox<String> role;
 	Integer tempId;
 	Dialog dg;
+	Text title;
 
 	private UserController userController = UserController.getUC();
 
 	public void initialize() {
-		container = new ScrollPane();
+		containerTable = new ScrollPane();
 		formBox = new GridPane();
 		nameLbl = new Label("Name");
 		emailLbl = new Label("Email");
@@ -53,12 +60,28 @@ public class ManageUser extends BorderPane {
 		emailTextField = new TextField();
 		role = new ComboBox<>();
 
-		buttonBox = new HBox();
+		container = new VBox(16);
+		titleContainer = new VBox();
+		buttonBox = new HBox(8);
+		buttonContainer = new VBox(8);
+
 		updateButton = new Button("Update");
 		deleteButton = new Button("Delete");
+		backButton = new Button("Back");
+
+		title = new Text("Manage User");
+
 		viewUser = new TableView<User>();
 		users = new ArrayList<User>();
 		dg = new Dialog();
+
+	}
+
+	public void style() {
+		title.setFont(new Font(24));
+		title.setTextAlignment(TextAlignment.CENTER);
+		titleContainer.getChildren().add(title);
+		titleContainer.setAlignment(Pos.CENTER);
 
 		nameTextField.setEditable(false);
 		emailTextField.setEditable(false);
@@ -76,13 +99,21 @@ public class ManageUser extends BorderPane {
 		formBox.add(nameTextField, 1, 0);
 		formBox.add(emailTextField, 1, 1);
 		formBox.add(role, 1, 2);
+		formBox.setAlignment(Pos.CENTER);
 
 		buttonBox.getChildren().addAll(updateButton, deleteButton);
 		buttonBox.setAlignment(Pos.CENTER);
 
-		container.setContent(viewUser);
-		container.setHbarPolicy(ScrollBarPolicy.NEVER);
-		container.setFitToWidth(true);
+		containerTable.setContent(viewUser);
+		containerTable.setHbarPolicy(ScrollBarPolicy.NEVER);
+		containerTable.setFitToWidth(true);
+
+		buttonContainer.getChildren().setAll(buttonBox, backButton);
+		buttonContainer.setAlignment(Pos.CENTER);
+
+		container.getChildren().setAll(titleContainer, containerTable, formBox, buttonContainer);
+		container.setPadding(new Insets(8));
+
 		setTable();
 	}
 
@@ -153,6 +184,11 @@ public class ManageUser extends BorderPane {
 	}
 
 	public void updateFunction() {
+		if (tempId == null) {
+			dg.informationDialog("Error", "Error Message", "Please select an user first!");
+			return;
+		}
+
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
 			Boolean status = userController.updateUser(tempId, role.getSelectionModel().getSelectedItem());
 			if (status) {
@@ -168,14 +204,7 @@ public class ManageUser extends BorderPane {
 		}
 	}
 
-	public ManageUser(Stage stage) {
-		initialize();
-		stage.setTitle("Manage User");
-
-		setTop(container);
-		setCenter(formBox);
-		setBottom(buttonBox);
-
+	public void eventListener(Stage stage) {
 		deleteButton.setOnMouseClicked(e -> {
 			deleteFunction();
 		});
@@ -183,6 +212,19 @@ public class ManageUser extends BorderPane {
 		updateButton.setOnMouseClicked(e -> {
 			updateFunction();
 		});
+
+		backButton.setOnMouseClicked(e -> {
+			stage.setScene(new Scene(new AdminHome(stage), 1366, 768));
+		});
+	}
+
+	public ManageUser(Stage stage) {
+		stage.setTitle("Manage User");
+		initialize();
+		style();
+		setCenter(container);
+		eventListener(stage);
+
 	}
 
 }

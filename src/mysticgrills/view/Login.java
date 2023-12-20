@@ -36,7 +36,7 @@ public class Login extends BorderPane {
 
 	// Initialize all component
 	public void initialize() {
-		container = new VBox(8);
+		container = new VBox(16);
 		emailBox = new VBox(4);
 		passwordBox = new VBox(4);
 

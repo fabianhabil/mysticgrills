@@ -156,9 +156,11 @@ public class ManageMenuItem extends BorderPane {
 
 	}
 
+	// Add menu item to database
 	public void addFunction() {
 		String status = menuItemController.createMenuItem(nameTextField.getText(), descTextField.getText(),
 				priceTextField.getText());
+
 		if (status.contains("success")) {
 			if (dg.informationDialog("Success Message", "Success", status)) {
 				refreshTable();
@@ -171,6 +173,7 @@ public class ManageMenuItem extends BorderPane {
 		}
 	}
 
+	// Delete menu item from database
 	public void deleteFunction() {
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
 			Boolean status = menuItemController.deleteMenuItem(tempId);
@@ -188,11 +191,12 @@ public class ManageMenuItem extends BorderPane {
 		}
 	}
 
+	// Update menu item from database
 	public void updateFunction() {
 		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
 			String status = menuItemController.updateMenuItem(tempId, menuItem.getMenuItemName(),
 					nameTextField.getText(), descTextField.getText(), priceTextField.getText());
-			System.out.println(priceTextField.getText());
+
 			if (status.contains("success")) {
 				if (dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
 					refreshTable();

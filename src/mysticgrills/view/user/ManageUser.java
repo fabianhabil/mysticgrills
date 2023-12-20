@@ -48,26 +48,26 @@ public class ManageUser extends BorderPane {
 		nameLbl = new Label("Name");
 		emailLbl = new Label("Email");
 		roleLbl = new Label("Role");
-		
+
 		nameTextField = new TextField();
 		emailTextField = new TextField();
 		role = new ComboBox<>();
-		
+
 		buttonBox = new HBox();
 		updateButton = new Button("Update");
 		deleteButton = new Button("Delete");
 		viewUser = new TableView<User>();
 		users = new ArrayList<User>();
 		dg = new Dialog();
-		
+
 		nameTextField.setEditable(false);
 		emailTextField.setEditable(false);
-		
+
 		viewUser.setMaxHeight(800);
 		viewUser.setPadding(new Insets(10, 10, 10, 10));
-		
+
 		role.getItems().addAll("Admin", "Cashier", "Chef", "Waiter", "Customer");
-		
+
 		formBox.setPadding(new Insets(10, 10, 10, 10));
 		formBox.add(nameLbl, 0, 0);
 		formBox.add(emailLbl, 0, 1);
@@ -76,10 +76,10 @@ public class ManageUser extends BorderPane {
 		formBox.add(nameTextField, 1, 0);
 		formBox.add(emailTextField, 1, 1);
 		formBox.add(role, 1, 2);
-		
+
 		buttonBox.getChildren().addAll(updateButton, deleteButton);
 		buttonBox.setAlignment(Pos.CENTER);
-		
+
 		container.setContent(viewUser);
 		container.setHbarPolicy(ScrollBarPolicy.NEVER);
 		container.setFitToWidth(true);
@@ -101,18 +101,18 @@ public class ManageUser extends BorderPane {
 
 		refreshTable();
 	}
-	
+
 	public void refreshTable() {
 		users = userController.getAllUser();
 		viewUser.getItems().clear();
 		viewUser.getItems().addAll(users);
 		viewUser.setOnMouseClicked(tableMouseEvent());
 	}
-	
+
 	// to handle if user press a row in table
 	private EventHandler<MouseEvent> tableMouseEvent() {
 		return new EventHandler<MouseEvent>() {
-			
+
 			// get user data from pressed table row
 			@Override
 			public void handle(MouseEvent event) {
@@ -120,43 +120,43 @@ public class ManageUser extends BorderPane {
 				tableSelectionModel.setSelectionMode(SelectionMode.SINGLE);
 				// get data from selected model
 				User user = tableSelectionModel.getSelectedItem();
-				
+
 				// display data in textfield and combobox
-				if(user != null) {
+				if (user != null) {
 					nameTextField.setText(user.getUserName());
 					emailTextField.setText(user.getUserEmail());
 					role.getSelectionModel().select(user.getUserRole());
-					
+
 					tempId = user.getUserId();
 				}
-				
+
 			}
 		};
-		
+
 	}
-	
+
 	public void deleteFunction() {
-		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
+		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to delete this?")) {
 			Boolean status = userController.deleteUser(tempId);
-			if(status ) {
-				if(dg.informationDialog("Success", "Success", "Account has been deleted!")) {
+			if (status) {
+				if (dg.informationDialog("Success", "Success", "Account has been deleted!")) {
 					refreshTable();
 					nameTextField.clear();
 					emailTextField.clear();
-					role.getSelectionModel().clearSelection();					
+					role.getSelectionModel().clearSelection();
 				}
 			} else {
 				dg.informationDialog("Error Message", "Error to delete", "Error to delete from DB");
 			}
-			
+
 		}
 	}
-	
+
 	public void updateFunction() {
-		if(dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
+		if (dg.confirmationDialog("Confirm", "Confirm Message", "Are you sure want to update?")) {
 			Boolean status = userController.updateUser(tempId, role.getSelectionModel().getSelectedItem());
-			if(status) {
-				if(dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
+			if (status) {
+				if (dg.informationDialog("Success", "Success Message", "Account has been updated!")) {
 					refreshTable();
 					nameTextField.clear();
 					emailTextField.clear();
@@ -170,14 +170,16 @@ public class ManageUser extends BorderPane {
 
 	public ManageUser(Stage stage) {
 		initialize();
+		stage.setTitle("Manage User");
+
 		setTop(container);
 		setCenter(formBox);
 		setBottom(buttonBox);
-		
+
 		deleteButton.setOnMouseClicked(e -> {
 			deleteFunction();
 		});
-		
+
 		updateButton.setOnMouseClicked(e -> {
 			updateFunction();
 		});

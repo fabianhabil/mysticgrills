@@ -16,6 +16,7 @@ import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.Login;
 import mysticgrills.view.Register;
+import mysticgrills.view.customer.AddOrder;
 
 public class CustomerHome extends BorderPane {
 	GlobalState gs = GlobalState.getInstance();
@@ -56,6 +57,12 @@ public class CustomerHome extends BorderPane {
 	}
 
 	public void listenerFunction(Stage stage) {
+		// Redirect to add order menu
+		addOrder.setOnMouseClicked(e -> {
+			stage.setScene(new Scene(new AddOrder(stage), 1366, 768));
+		});
+
+		// Logout
 		logout.setOnMouseClicked(e -> {
 			gs.removeUser();
 			dg.informationDialog("Success", "Success", "Logout Success");
@@ -64,6 +71,7 @@ public class CustomerHome extends BorderPane {
 	}
 
 	public CustomerHome(Stage stage) {
+		stage.setTitle("Home");
 		initialize();
 		fill();
 		listenerFunction(stage);

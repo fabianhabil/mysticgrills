@@ -1,8 +1,11 @@
 package mysticgrills.model;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import javafx.scene.Scene;
 import mysticgrills.DatabaseConnection;
 import mysticgrills.GlobalState;
 
@@ -69,6 +72,7 @@ public class User {
 		this.userPassword = userPassword;
 	}
 
+	// Insert user to database
 	public String createUser(String userRole, String userName, String userEmail, String userPassword,
 			String passwordConfirm) {
 		String query = String.format(
@@ -80,37 +84,43 @@ public class User {
 		return "Your account has been successfully created. Please log in to access your account.";
 	}
 
+	// Login function for user
 	public String authenticateUser(String userEmail, String userPassword) {
-		String query = String.format("SELECT * FROM `users` WHERE `userEmail` = \"%s\" AND `userPassword` = \"%s\"",
-				userEmail, userPassword);
-		ResultSet rs = db.selectData(query);
+		String query = String.format("SELECT * FROM `users` WHERE `userEmail` = ? AND `userPassword` = ?");
+		PreparedStatement ps = db.preparedStatement(query);
+		ResultSet rs;
+
 		try {
+			ps.setString(1, userEmail);
+			ps.setString(2, userPassword);
+			rs = ps.executeQuery();
+			// If match 100% its the same username and password, so user successfully logged
+			// in if the data is present on the database
 			if (rs.next()) {
-				if (rs.getString("userEmail").equals(userEmail) && rs.getString("userPassword").equals(userPassword)) {
-					System.out.println(
-							rs.getInt(1) + rs.getString(2) + rs.getString(3) + rs.getString(4) + rs.getString(5));
-					global.addUser(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
-					return "Login Success";
-				}
+				global.addUser(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+				return "Login Success";
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Username or Password wrong";
+
+		return "Wrong Password";
 	}
 
+	// Update User
 	public Boolean updateUser(Integer userId, String newUserRole) {
 		String query = String.format("UPDATE `users` SET `userRole`= \"%s\" WHERE `userId` = \"%s\"", newUserRole,
 				userId);
 		return db.execute(query);
 	}
 
+	// Delete User
 	public Boolean deleteUser(Integer userId) {
 		String query = String.format("DELETE FROM `users` WHERE `userId` = \"%s\"", userId);
 		return db.execute(query);
 	}
 
+	// Get All User
 	public ArrayList<User> getAllUser() {
 		ArrayList<User> users = new ArrayList<User>();
 

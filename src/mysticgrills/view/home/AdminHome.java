@@ -57,14 +57,17 @@ public class AdminHome extends BorderPane {
 	}
 
 	public void listenerFunction(Stage stage) {
+		// Redirect to manage user menu
 		manageUser.setOnMouseClicked(e -> {
 			stage.setScene(new Scene(new ManageUser(stage), 1366, 768));
 		});
 
+		// Redirect to manage menu item menu
 		manageMenu.setOnMouseClicked(e -> {
 			stage.setScene(new Scene(new ManageMenuItem(stage), 1366, 768));
 		});
 
+		// Logout
 		logout.setOnMouseClicked(e -> {
 			gs.removeUser();
 			dg.informationDialog("Success", "Success", "Logout Success");
@@ -73,6 +76,7 @@ public class AdminHome extends BorderPane {
 	}
 
 	public AdminHome(Stage stage) {
+		stage.setTitle("Home");
 		initialize();
 		listenerFunction(stage);
 		fill();

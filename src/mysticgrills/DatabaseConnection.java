@@ -74,6 +74,18 @@ public class DatabaseConnection {
 		}
 
 		return ps;
+	}
 
+	// For all query and avoid SQL Injection return the created ID
+	public PreparedStatement preparedStatement(String query, Boolean returnId) {
+		PreparedStatement ps = null;
+		try {
+			ps = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return ps;
 	}
 }

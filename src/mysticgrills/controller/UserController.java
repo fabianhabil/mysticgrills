@@ -75,7 +75,7 @@ public class UserController {
 		}
 
 		if (getCountUserEmail(userEmail) < 1) {
-			return "Email doesn't exist";
+			return "Email is not registered";
 		}
 
 		String status = user.authenticateUser(userEmail, userPassword);
@@ -100,30 +100,30 @@ public class UserController {
 
 		return count;
 	}
-	
+
 	public Boolean updateUser(Integer userId, String newUserRole) {
-		if(user.updateUser(userId, newUserRole)) {
+		if (user.updateUser(userId, newUserRole)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public Boolean deleteUser(Integer userId) {
-		
+
 		// check userId from DB and Delete from DB
-		if(getCountUserId(userId) == 1 && user.deleteUser(userId)) {
+		if (getCountUserId(userId) == 1 && user.deleteUser(userId)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public int getCountUserId(Integer userId) {
 		String query = String.format("SELECT COUNT(`userId`) FROM `users` WHERE `userId` = \"%s\"", userId);
 		int count = 0;
 		ResultSet rs = db.selectData(query);
 		try {
-			if(rs.next()) {
+			if (rs.next()) {
 				count = rs.getInt(1);
 			}
 		} catch (Exception e) {

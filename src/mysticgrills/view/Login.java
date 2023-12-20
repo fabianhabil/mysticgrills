@@ -70,6 +70,7 @@ public class Login extends BorderPane {
 	}
 
 	public void listenerFunction(Stage stage) {
+		// Login Button Functional
 		loginButton.setOnMouseClicked(e -> {
 			String status = userController.authenticateUser(emailField.getText(), passField.getText());
 
@@ -87,6 +88,8 @@ public class Login extends BorderPane {
 		});
 	}
 
+	// User logged in and redirect user to the specified homepage according to their
+	// role
 	public void redirectUser(Stage stage) {
 		User user = gs.getCurrentLoggedInUser();
 		BorderPane bp;
@@ -112,7 +115,6 @@ public class Login extends BorderPane {
 		style();
 		setCenter(container);
 		listenerFunction(stage);
-
 	}
 
 }

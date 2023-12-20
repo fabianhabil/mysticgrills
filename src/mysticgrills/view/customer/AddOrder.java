@@ -216,7 +216,7 @@ public class AddOrder extends BorderPane {
 			// Remove items from the hashmap and rerender the cart
 			deleteMenu.setOnMouseClicked(e -> {
 				// Count the grand total of the cart
-				total = (int) (total - menu.getMenuItemPrice() * item.getQuantity());
+				total = (int) (total - (menu.getMenuItemPrice() * item.getQuantity()));
 
 				newOrderItems.remove(id);
 				refreshCart();
@@ -315,15 +315,21 @@ public class AddOrder extends BorderPane {
 
 					newOrderItems.put(menuItemSelected.getMenuItemId(), newOrderItem);
 
+					// Count the grand total of the cart
+					total += (newOrderItem.getMenuItem().getMenuItemPrice() * quantity);
+
+					// If item already in cart and user add another quantity, remove the old
+					// quantity price
+					if (orderItem != null) {
+						total -= (orderItem.getMenuItem().getMenuItemPrice() * orderItem.getQuantity());
+					}
+
 					// Reset the form box and the selected item after add to cart
 					quantityTextField.setText("");
 					itemName.setText("");
 					itemPrice.setText("");
 					formBox.setVisible(false);
 					menuItemSelected = null;
-
-					// Count the grand total of the cart
-					total += newOrderItem.getMenuItem().getMenuItemPrice() * newOrderItem.getQuantity();
 
 					// Refresh the cart
 					refreshCart();

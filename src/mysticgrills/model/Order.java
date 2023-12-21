@@ -124,30 +124,37 @@ public class Order {
 		return -1;
 	}
 
+	// So on the visual paradigm, we only get the OrderItemId and query all of them
+	// one by one
+	// For improving and saving resources to our databases, we just get all the
+	// OrderItem and JOIN with all the relational table, so we get the OrderItem,
+	// User and the MenuItem of the order
 	public ArrayList<Order> getAllOrders(String role) {
 		ArrayList<Order> orders = new ArrayList<>();
 		Order currOrder = null;
+		User currUser = globalState.getCurrentLoggedInUser();
 
 		ResultSet rs = null;
 
 		if (role.equals("Customer")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE userId=1");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE userId="
+							+ currUser.getUserId() + " ORDER BY orders.orderId ASC");
 		}
 
 		if (role.equals("Chef")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Pending\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Pending\"  ORDER BY orders.orderId ASC");
 		}
 
 		if (role.equals("Waiter")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Prepared\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Prepared\"  ORDER BY orders.orderId ASC");
 		}
 
 		if (role.equals("Cashier")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Served\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Served\"  ORDER BY orders.orderId ASC");
 		}
 
 		try {
@@ -211,10 +218,11 @@ public class Order {
 			}
 
 			// Last item need to be appended because its rs.next() and the last condition on
-			// line 199 is not called, but check incase no data so its remains null
+			// line 206 is not called, but check incase no data so its remains null
 			if (currOrder != null) {
 				orders.add(currOrder);
 			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -224,7 +232,6 @@ public class Order {
 	}
 
 	public Boolean updateOrder(String role, Integer orderId) {
-
 		String query = null;
 
 		if (role.equals("Chef")) {
@@ -241,9 +248,79 @@ public class Order {
 		return db.execute(query);
 	}
 
+	public Boolean updateOrder(Integer orderId, Double total) {
+		String query = String.format(
+				"UPDATE `orders` SET `orderTotal`= \"%f\", `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", total,
+				"Paid", orderId.toString());
+		return db.execute(query);
+	}
+
 	public Boolean deleteOrder(Integer orderId) {
 		String query = String.format("DELETE FROM `orders` WHERE `orderId` = \"%s\"", orderId);
 		return db.execute(query);
+	}
+
+	// So on the visual paradigm, we only get the OrderItemId and query all of them
+	// one by one
+	// For improving and saving resources to our databases, we just get all the
+	// OrderItem and JOIN with all the relational table, so we get the OrderItem,
+	// User and the MenuItem of the order
+	public Order getOrderByOrderId(Integer orderId) {
+		Order order = null;
+
+		ResultSet rs = db.selectData(
+				"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId="
+						+ orderId);
+
+		try {
+			while (rs.next()) {
+				// Order
+				String status = rs.getString("orderStatus");
+				Date date = rs.getDate("orderDate");
+				Integer total = rs.getInt("orderTotal");
+
+				// User
+				Integer userId = rs.getInt("userId");
+				String userRole = rs.getString("userRole");
+				String userName = rs.getString("userName");
+				String userEmail = rs.getString("userEmail");
+
+				// Order Item
+				Integer orderItemId = rs.getInt("orderItemId");
+				Integer quantity = rs.getInt("quantity");
+
+				// Menu Item
+				Integer menuItemId = rs.getInt("menuItemId");
+				String menuItemName = rs.getString("menuItemName");
+				String menuItemDescription = rs.getString("menuItemDescription");
+				Double menuItemPrice = rs.getDouble("menuItemPrice");
+
+				// Construct Menu Item and Order Item to be added to the orderItems
+				MenuItem menuItem = new MenuItem(menuItemId, menuItemName, menuItemDescription, menuItemPrice);
+				OrderItem orderItem = new OrderItem(orderItemId, orderId, menuItem, quantity);
+
+				// So on the visual paradigm, we only get the OrderItemId and query all of them
+				// one by one
+				// For improving and saving resources to our databases, we just get all the
+				// OrderItem and JOIN with all the relational table, so we get the OrderItem,
+				// User and the MenuItem of the order
+
+				// If the current order pointer is null, initialize a new current order
+				if (order == null) {
+					User user = new User(userId, userRole, userName, userEmail);
+					order = new Order(orderId, user, status, date, total);
+				}
+
+				// Append orderItem to the currOrder
+				order.getOrderItems().add(orderItem);
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return order;
 	}
 
 }

@@ -3,9 +3,6 @@ package mysticgrills.view.customer;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -350,10 +347,10 @@ public class AddOrder extends BorderPane {
 				itemTotal.setText(total.toString());
 				totalLbl.setVisible(true);
 				itemTotal.setVisible(true);
-			} else {
-				// Input from quantity textfield is invalid, return notice error
-				dg.informationDialog("Error", "Error Message", "Quantity cant be empty and must be a number!");
-			}
+				} else {
+					// Input from quantity textfield is invalid, return notice error
+					dg.informationDialog("Error", "Error Message", "Quantity cant be empty and must be a number!");
+				}
 
 		});
 

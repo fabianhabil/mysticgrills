@@ -1,6 +1,5 @@
 package mysticgrills.view.home;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +16,7 @@ import mysticgrills.utils.Dialog;
 import mysticgrills.view.Login;
 import mysticgrills.view.order.ViewOrder;
 
-public class KitchenHome extends BorderPane  {
+public class KitchenHome extends BorderPane {
 
 	GlobalState gs = GlobalState.getInstance();
 
@@ -39,7 +38,6 @@ public class KitchenHome extends BorderPane  {
 		// Button Container
 		buttonBox.getChildren().addAll(viewOrder);
 		buttonBox.setAlignment(Pos.CENTER);
-//		HBox.setMargin(addOrder, new Insets(10));
 
 		// Container
 		container.getChildren().addAll(notice, buttonBox, logout);
@@ -67,7 +65,7 @@ public class KitchenHome extends BorderPane  {
 			stage.setScene(new Scene(new Login(stage), 1366, 768));
 		});
 	}
-	
+
 	public KitchenHome(Stage stage) {
 		stage.setTitle("Kitchen");
 		initialize();

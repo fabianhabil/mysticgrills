@@ -3,8 +3,6 @@ package mysticgrills.controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mysticgrills.DatabaseConnection;
 import mysticgrills.model.User;

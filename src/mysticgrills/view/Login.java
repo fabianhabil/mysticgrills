@@ -9,16 +9,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import mysticgrills.GlobalState;
 import mysticgrills.controller.UserController;
 import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.home.AdminHome;
+import mysticgrills.view.home.CashierHome;
 import mysticgrills.view.home.CustomerHome;
 import mysticgrills.view.home.KitchenHome;
-import mysticgrills.view.user.ManageUser;
 
 public class Login extends BorderPane {
 
@@ -103,8 +102,12 @@ public class Login extends BorderPane {
 			bp = new AdminHome(stage);
 		}
 
-		else if (user.getUserRole().equals("Chef") || user.getUserRole().equals("Waiter") || user.getUserRole().equals("Cashier")) {
+		else if (user.getUserRole().equals("Chef") || user.getUserRole().equals("Waiter")) {
 			bp = new KitchenHome(stage);
+		}
+
+		else if (user.getUserRole().equals("Cashier")) {
+			bp = new CashierHome(stage);
 		}
 
 		else {

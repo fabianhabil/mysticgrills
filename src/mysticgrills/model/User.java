@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javafx.scene.Scene;
 import mysticgrills.DatabaseConnection;
 import mysticgrills.GlobalState;
 

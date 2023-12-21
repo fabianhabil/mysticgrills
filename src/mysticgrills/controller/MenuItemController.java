@@ -1,20 +1,15 @@
 package mysticgrills.controller;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import mysticgrills.DatabaseConnection;
 import mysticgrills.model.MenuItem;
 
 public class MenuItemController {
-	private DatabaseConnection db;
 	private static MenuItemController mc;
 	MenuItem menuItem;
 
 	private MenuItemController() {
 		menuItem = new MenuItem();
-		db = DatabaseConnection.getInstance();
 	}
 
 	public static MenuItemController getMC() {

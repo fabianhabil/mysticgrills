@@ -77,14 +77,11 @@ public class OrderItem {
 	}
 
 	public ArrayList<OrderItem> getOrderItemsByOrderId(Integer orderId) {
-//		SELECT * FROM `orders` INNER JOIN `orderItems` ON orders.orderId = orderItems.orderId INNER JOIN `menuItems` ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId = "1";
 		ArrayList<OrderItem> orderDetails = new ArrayList<OrderItem>();
 
 		String query = String.format(
 				"SELECT * FROM `orders` INNER JOIN `orderItems` ON orders.orderId = orderItems.orderId INNER JOIN `menuItems` ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId = \"%s\"",
 				orderId);
-
-		System.out.println(query);
 
 		ResultSet rs = db.selectData(query);
 
@@ -99,8 +96,6 @@ public class OrderItem {
 				Double menuItemPrice = rs.getDouble("menuItemPrice");
 
 				MenuItem menuItem = new MenuItem(menuItemId, menuItemName, menuItemDescription, menuItemPrice);
-				System.out.println(menuItemId + menuItemName + menuItemDescription + menuItemPrice);
-				System.out.println(id + idOrder + qty);
 				orderDetails.add(new OrderItem(id, idOrder, menuItem, qty));
 
 			}
@@ -113,8 +108,13 @@ public class OrderItem {
 	}
 
 	public Boolean deleteOrderItem(Integer orderItemId) {
-
 		String query = String.format("DELETE FROM `orderItems` WHERE `orderItemId` = \"%s\"", orderItemId);
+		return db.execute(query);
+	}
+
+	public Boolean updateOrderItem(Integer orderItemId, Integer quantity) {
+		String query = "UPDATE `orderItems` SET `quantity`= '" + quantity + "' WHERE `orderItemId` = " + orderItemId;
+		System.out.println(query);
 		return db.execute(query);
 	}
 }

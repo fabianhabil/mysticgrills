@@ -2,10 +2,6 @@ package mysticgrills.view.order;
 
 import java.sql.Date;
 import java.util.ArrayList;
-//import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -13,13 +9,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableSelectionModel;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -33,15 +27,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import mysticgrills.GlobalState;
-import mysticgrills.controller.MenuItemController;
 import mysticgrills.controller.OrderController;
-import mysticgrills.controller.OrderItemController;
-import mysticgrills.model.MenuItem;
 import mysticgrills.model.Order;
 import mysticgrills.model.OrderItem;
-import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
-import mysticgrills.view.home.CustomerHome;
+import mysticgrills.view.home.CashierHome;
 import mysticgrills.view.home.KitchenHome;
 
 public class ViewOrder extends BorderPane {
@@ -51,7 +41,7 @@ public class ViewOrder extends BorderPane {
 	ScrollPane containerTable;
 	TableView<Order> viewOrder;
 	ArrayList<Order> orders;
-	Button processOrderButton, deleteButton, viewOrderButton, backButton;
+	Button processOrderButton, viewOrderButton, backButton;
 	GridPane formBox;
 	Dialog dg;
 	Text title;
@@ -59,7 +49,6 @@ public class ViewOrder extends BorderPane {
 
 	private OrderController orderController = OrderController.getInstance();
 	private GlobalState globalState = GlobalState.getInstance();
-
 	private Order orderSelected;
 
 	public void initialize() {
@@ -75,7 +64,6 @@ public class ViewOrder extends BorderPane {
 		tableCart = new HBox(16);
 		cartContainer = new VBox(8);
 
-		deleteButton = new Button("Delete");
 		viewOrderButton = new Button("View Order Detail");
 		backButton = new Button("Back");
 
@@ -102,6 +90,7 @@ public class ViewOrder extends BorderPane {
 	public void initWaiter() {
 		title = new Text("View Prepared Order");
 		processOrderButton = new Button("Serve Order");
+		buttonBox.getChildren().addAll(processOrderButton, viewOrderButton);
 		setTableForWaiterandChef();
 	}
 
@@ -109,12 +98,16 @@ public class ViewOrder extends BorderPane {
 	public void initChef() {
 		title = new Text("View Pending Order");
 		processOrderButton = new Button("Prepare Order");
+		buttonBox.getChildren().addAll(processOrderButton, viewOrderButton);
 		setTableForWaiterandChef();
 	}
 
+	// set init from cashier
 	public void initCashier() {
-		title = new Text("View Order");
+		title = new Text("View Order Cashier");
 		processOrderButton = new Button("Pay Order");
+		viewOrderButton.setText("Handle Payment");
+		buttonBox.getChildren().addAll(viewOrderButton);
 		setTableForCashier();
 	}
 
@@ -138,10 +131,8 @@ public class ViewOrder extends BorderPane {
 		formBox.setVisible(false);
 
 		processOrderButton.setMinWidth(150);
-		deleteButton.setMinWidth(150);
 		viewOrderButton.setMinWidth(150);
 
-		buttonBox.getChildren().addAll(processOrderButton, viewOrderButton, deleteButton);
 		buttonBox.setAlignment(Pos.CENTER);
 
 		containerTable.setContent(viewOrder);
@@ -192,7 +183,7 @@ public class ViewOrder extends BorderPane {
 		TableColumn<Order, Integer> idColumn = new TableColumn<Order, Integer>("ID");
 		TableColumn<Order, String> nameColumn = new TableColumn<Order, String>("User Name");
 		TableColumn<Order, String> statusColumn = new TableColumn<Order, String>("Status");
-		TableColumn<Order, Double> priceColumn = new TableColumn<Order, Double>("Total Price");
+		TableColumn<Order, String> priceColumn = new TableColumn<Order, String>("Total Price");
 		TableColumn<Order, Date> dateColumn = new TableColumn<Order, Date>("Order Date");
 
 		viewOrder.getColumns().addAll(idColumn, nameColumn, statusColumn, dateColumn, priceColumn);
@@ -206,12 +197,28 @@ public class ViewOrder extends BorderPane {
 					@Override
 					public ObservableValue<String> call(TableColumn.CellDataFeatures<Order, String> param) {
 						return new SimpleObjectProperty<>(param.getValue().getOrderUser().getUserName());
-
 					}
 				});
 
 		statusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
-		priceColumn.setCellValueFactory(new PropertyValueFactory<>("orderTotal"));
+
+		// Accessing value in nested objects, we need to make custom for the
+		// PropertyValueFactory
+		priceColumn.setCellValueFactory(
+				new Callback<TableColumn.CellDataFeatures<Order, String>, ObservableValue<String>>() {
+					@Override
+					public ObservableValue<String> call(TableColumn.CellDataFeatures<Order, String> param) {
+						ArrayList<OrderItem> orderItem = param.getValue().getOrderItems();
+						Double total = (double) 0;
+
+						for (int i = 0; i < orderItem.size(); i++) {
+							total += orderItem.get(i).getQuantity() * orderItem.get(i).getMenuItem().getMenuItemPrice();
+						}
+
+						return new SimpleObjectProperty<>("Rp " + total);
+					}
+				});
+
 		dateColumn.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
 
 		refreshTable();
@@ -250,7 +257,7 @@ public class ViewOrder extends BorderPane {
 		// Process Order Listener
 		processOrderButton.setOnMouseClicked(e -> {
 			if (orderSelected == null) {
-				dg.informationDialog("Information", "Information", "Choose the data");
+				dg.informationDialog("Information", "Information", "Choose Order First!");
 			} else {
 				// confirmation to delete the data
 				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String.format(
@@ -258,7 +265,6 @@ public class ViewOrder extends BorderPane {
 
 				// if user click sure to delete the data
 				if (confirmationDelete) {
-//					System.out.println("Yes");
 					if (orderController.updateOrder(globalState.getCurrentLoggedInUser().getUserRole(),
 							orderSelected.getOrderId())) {
 						dg.informationDialog("Information", "Information", "Process Order");
@@ -273,44 +279,17 @@ public class ViewOrder extends BorderPane {
 			if (orderSelected == null) {
 				dg.informationDialog("Information", "Information", "Choose the data");
 			} else {
-				// confirmation to delete the data
-				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String
-						.format("Are you sure you want to view this order (OrderId: %d)?", orderSelected.getOrderId()));
-
-				// if user click sure to delete the data
-				if (confirmationDelete) {
-					System.out.println("Yes");
-					stage.setScene(new Scene(new ViewOrderDetail(stage, orderSelected.getOrderId()), 1366, 768));
-				}
+				stage.setScene(new Scene(new ViewOrderDetail(stage, orderSelected.getOrderId()), 1366, 768));
 			}
-		});
-
-		// Delete Button Listener
-		deleteButton.setOnMouseClicked(e -> {
-
-			// if user not choose the data
-			if (orderSelected == null) {
-				dg.informationDialog("Information", "Information", "Choose the data");
-			} else {
-				// confirmation to delete the data
-				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation",
-						"Are you sure you want to delete this Order?");
-
-				// if user click sure to delete the data
-				if (confirmationDelete) {
-					if (orderController.deleteOrder(orderSelected.getOrderId())) {
-						dg.informationDialog("Information", "Information", "Order deleted");
-						refreshTable();
-					}
-					System.out.println("Yes");
-				}
-			}
-
 		});
 
 		// Back to home customer menu
 		backButton.setOnMouseClicked(e -> {
-			stage.setScene(new Scene(new KitchenHome(stage), 1366, 768));
+			if (globalState.getCurrentLoggedInUser().getUserRole().equals("Cashier")) {
+				stage.setScene(new Scene(new CashierHome(stage), 1366, 768));
+			} else {
+				stage.setScene(new Scene(new KitchenHome(stage), 1366, 768));
+			}
 		});
 	}
 

@@ -3,10 +3,8 @@ package mysticgrills.model;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 import mysticgrills.DatabaseConnection;
-import mysticgrills.GlobalState;
 
 public class MenuItem {
 
@@ -16,7 +14,6 @@ public class MenuItem {
 	private Double menuItemPrice;
 	
 	private DatabaseConnection db = DatabaseConnection.getInstance();
-	private GlobalState global = GlobalState.getInstance();
 	
 	public MenuItem() {
 		
@@ -80,7 +77,6 @@ public class MenuItem {
 				String name = rs.getString("menuItemName");
 				String desc = rs.getString("menuItemDescription");
 				Double price = rs.getDouble("MenuItemPrice");
-				System.out.println(id + " " + name + " " + desc + " " + price);
 				menuItems.add(new MenuItem(id, name, desc, price));
 
 			}

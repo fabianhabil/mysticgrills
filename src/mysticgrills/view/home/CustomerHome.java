@@ -15,7 +15,6 @@ import mysticgrills.GlobalState;
 import mysticgrills.model.User;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.Login;
-import mysticgrills.view.Register;
 import mysticgrills.view.customer.AddOrder;
 import mysticgrills.view.customer.ViewCustomerOrder;
 

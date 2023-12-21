@@ -29,6 +29,7 @@ import mysticgrills.controller.OrderController;
 import mysticgrills.model.Order;
 import mysticgrills.utils.Dialog;
 import mysticgrills.view.home.CustomerHome;
+import mysticgrills.view.order.ViewOrderDetail;
 
 public class ViewCustomerOrder extends BorderPane {
 	VBox container, titleContainer, buttonContainer;
@@ -37,7 +38,7 @@ public class ViewCustomerOrder extends BorderPane {
 	ScrollPane containerTable;
 	TableView<Order> tableOrder;
 	ArrayList<Order> orders;
-	Button viewOrderButton, editOrderButton, backButton;
+	Button viewOrderButton, backButton;
 	Text title;
 
 	Dialog dg;
@@ -56,7 +57,6 @@ public class ViewCustomerOrder extends BorderPane {
 		tableOrder = new TableView<Order>();
 
 		viewOrderButton = new Button("View Detail Order");
-		editOrderButton = new Button("Edit Order");
 		backButton = new Button("Back");
 
 		title = new Text("View Order");
@@ -77,8 +77,9 @@ public class ViewCustomerOrder extends BorderPane {
 		buttonBox.setAlignment(Pos.CENTER);
 		buttonBox.setVisible(false);
 
-		buttonBox.getChildren().setAll(viewOrderButton, editOrderButton);
+		buttonBox.getChildren().setAll(viewOrderButton);
 		buttonBox.setAlignment(Pos.CENTER);
+		buttonBox.setVisible(false);
 
 		containerTable.setContent(tableOrder);
 		containerTable.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -127,9 +128,7 @@ public class ViewCustomerOrder extends BorderPane {
 				new Callback<TableColumn.CellDataFeatures<Order, String>, ObservableValue<String>>() {
 					@Override
 					public ObservableValue<String> call(TableColumn.CellDataFeatures<Order, String> param) {
-
 						return new SimpleObjectProperty<>(param.getValue().getOrderItems().size() + " pcs");
-
 					}
 				});
 
@@ -156,6 +155,7 @@ public class ViewCustomerOrder extends BorderPane {
 
 				// get data from selected model
 				orderSelected = tableSelectionModel.getSelectedItem();
+				buttonBox.setVisible(true);
 			}
 		};
 	}
@@ -164,6 +164,15 @@ public class ViewCustomerOrder extends BorderPane {
 		backButton.setOnMouseClicked(e -> {
 			stage.setScene(new Scene(new CustomerHome(stage), 1366, 768));
 		});
+
+		viewOrderButton.setOnMouseClicked(e -> {
+			if (orderSelected == null) {
+				dg.informationDialog("Information", "Information", "Choose Order First!");
+			} else {
+				stage.setScene(new Scene(new ViewOrderDetail(stage, orderSelected.getOrderId()), 1366, 768));
+			}
+		});
+
 	}
 
 	public ViewCustomerOrder(Stage stage) {
@@ -171,6 +180,7 @@ public class ViewCustomerOrder extends BorderPane {
 		initialize();
 		style();
 		setCenter(container);
+		eventListener(stage);
 	}
 
 }

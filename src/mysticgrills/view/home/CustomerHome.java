@@ -17,6 +17,7 @@ import mysticgrills.utils.Dialog;
 import mysticgrills.view.Login;
 import mysticgrills.view.Register;
 import mysticgrills.view.customer.AddOrder;
+import mysticgrills.view.customer.ViewCustomerOrder;
 
 public class CustomerHome extends BorderPane {
 	GlobalState gs = GlobalState.getInstance();
@@ -60,6 +61,11 @@ public class CustomerHome extends BorderPane {
 		// Redirect to add order menu
 		addOrder.setOnMouseClicked(e -> {
 			stage.setScene(new Scene(new AddOrder(stage), 1366, 768));
+		});
+
+		// View Order
+		viewOrder.setOnMouseClicked(e -> {
+			stage.setScene(new Scene(new ViewCustomerOrder(stage), 1366, 768));
 		});
 
 		// Logout

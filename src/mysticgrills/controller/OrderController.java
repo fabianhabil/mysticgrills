@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import mysticgrills.DatabaseConnection;
+import mysticgrills.GlobalState;
 import mysticgrills.model.Order;
 import mysticgrills.model.OrderItem;
 import mysticgrills.model.User;
@@ -38,11 +39,11 @@ public class OrderController {
 	public ArrayList<Order> getAllOrders(String role) {
 		return order.getAllOrders(role);
 	}
-	
+
 	public Boolean updateOrder(String role, Integer orderId) {
 		return order.updateOrder(role, orderId);
 	}
-	
+
 	public Boolean deleteOrder(Integer orderId) {
 		return order.deleteOrder(orderId);
 	}

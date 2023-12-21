@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import mysticgrills.DatabaseConnection;
+import mysticgrills.GlobalState;
 
 public class Order {
 
@@ -20,6 +21,7 @@ public class Order {
 	private Integer orderTotal;
 
 	private DatabaseConnection db = DatabaseConnection.getInstance();
+	private GlobalState globalState = GlobalState.getInstance();
 
 	public Order(Integer orderId, User orderUser, ArrayList<OrderItem> orderItems, String orderStatus, Date orderDate,
 			Integer orderTotal) {
@@ -37,6 +39,7 @@ public class Order {
 		this.orderStatus = orderStatus;
 		this.orderDate = orderDate;
 		this.orderTotal = orderTotal;
+		this.orderItems = new ArrayList<OrderItem>();
 	}
 
 	public Order() {
@@ -122,40 +125,95 @@ public class Order {
 	}
 
 	public ArrayList<Order> getAllOrders(String role) {
-		// TODO Auto-generated method stub
 		ArrayList<Order> orders = new ArrayList<>();
+		Order currOrder = null;
 
 		ResultSet rs = null;
 
+		if (role.equals("Customer")) {
+			rs = db.selectData(
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE userId=1");
+		}
+
 		if (role.equals("Chef")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Pending\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Pending\"");
 		}
 
 		if (role.equals("Waiter")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Prepared\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Prepared\"");
 		}
-		
-		if(role.equals("Cashier")) {
+
+		if (role.equals("Cashier")) {
 			rs = db.selectData(
-					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId WHERE orderStatus = \"Served\"");
+					"SELECT * FROM `orders` INNER JOIN `users` ON orders.orderUser = users.userId INNER JOIN orderItems ON orders.orderId = orderItems.orderId INNER JOIN menuItems ON menuItems.menuItemId = orderItems.menuItem WHERE orderStatus = \"Served\"");
 		}
 
 		try {
 			while (rs.next()) {
-				Integer id = rs.getInt("orderId");
-				String status = rs.getString("OrderStatus");
-				Date date = rs.getDate("OrderDate");
+				// Order
+				Integer orderId = rs.getInt("orderId");
+				String status = rs.getString("orderStatus");
+				Date date = rs.getDate("orderDate");
 				Integer total = rs.getInt("orderTotal");
+
+				// User
 				Integer userId = rs.getInt("userId");
 				String userRole = rs.getString("userRole");
 				String userName = rs.getString("userName");
 				String userEmail = rs.getString("userEmail");
-				System.out.println("order: " + id + " " + status + " " + date + " " + total);
-				System.out.println("user: " + userId + " " + userRole + " " + userName + " " + userEmail);
-				User user = new User(userId, userRole, userName, userEmail);
-				orders.add(new Order(id, user, status, date, total));
+
+				// Order Item
+				Integer orderItemId = rs.getInt("orderItemId");
+				Integer quantity = rs.getInt("quantity");
+
+				// Menu Item
+				Integer menuItemId = rs.getInt("menuItemId");
+				String menuItemName = rs.getString("menuItemName");
+				String menuItemDescription = rs.getString("menuItemDescription");
+				Double menuItemPrice = rs.getDouble("menuItemPrice");
+
+				// Construct Menu Item and Order Item to be added to the orderItems
+				MenuItem menuItem = new MenuItem(menuItemId, menuItemName, menuItemDescription, menuItemPrice);
+				OrderItem orderItem = new OrderItem(orderItemId, orderId, menuItem, quantity);
+
+				// So on the visual paradigm, we only get the OrderItemId and query all of them
+				// one by one
+				// For improving and saving resources to our databases, we just get all the
+				// OrderItem and JOIN with all the relational table, so we get the OrderItem,
+				// User and the MenuItem of the order
+
+				// If the current order pointer is null, initialize a new current order
+				if (currOrder == null) {
+					User user = new User(userId, userRole, userName, userEmail);
+					currOrder = new Order(orderId, user, status, date, total);
+				}
+
+				else {
+					// If the pointer is not null and the orderId is different (its the next row
+					// that different orderId)
+
+					if (currOrder.getOrderId() != orderId) {
+						// Add the current pointer to the Array List
+						orders.add(currOrder);
+
+						// Initialize a new current order and loop again until all the orderItem is
+						// added
+						User user = new User(userId, userRole, userName, userEmail);
+						currOrder = new Order(orderId, user, status, date, total);
+					}
+				}
+
+				// Append orderItem to the currOrder
+				currOrder.getOrderItems().add(orderItem);
+
+			}
+
+			// Last item need to be appended because its rs.next() and the last condition on
+			// line 199 is not called, but check incase no data so its remains null
+			if (currOrder != null) {
+				orders.add(currOrder);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -164,25 +222,25 @@ public class Order {
 
 		return orders;
 	}
-	
+
 	public Boolean updateOrder(String role, Integer orderId) {
-		
+
 		String query = null;
-		
+
 		if (role.equals("Chef")) {
 			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Prepared",
 					orderId.toString());
 		} else if (role.equals("Waiter")) {
 			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Served",
 					orderId.toString());
-		} else if(role.equals("Cashier")) {
+		} else if (role.equals("Cashier")) {
 			query = String.format("UPDATE `orders` SET `orderStatus`= \"%s\" WHERE `orderId` = \"%s\"", "Paid",
 					orderId.toString());
 		}
-		
+
 		return db.execute(query);
 	}
-	
+
 	public Boolean deleteOrder(Integer orderId) {
 		String query = String.format("DELETE FROM `orders` WHERE `orderId` = \"%s\"", orderId);
 		return db.execute(query);

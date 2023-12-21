@@ -14,7 +14,7 @@ public class OrderItem {
 	private Integer quantity;
 
 	private DatabaseConnection db = DatabaseConnection.getInstance();
-	
+
 	public OrderItem(Integer orderId, MenuItem menuItem, Integer quantity) {
 		this.orderId = orderId;
 		this.menuItem = menuItem;
@@ -76,15 +76,16 @@ public class OrderItem {
 		return true;
 	}
 
-	
 	public ArrayList<OrderItem> getOrderItemsByOrderId(Integer orderId) {
 //		SELECT * FROM `orders` INNER JOIN `orderItems` ON orders.orderId = orderItems.orderId INNER JOIN `menuItems` ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId = "1";
 		ArrayList<OrderItem> orderDetails = new ArrayList<OrderItem>();
 
-		String query = String.format("SELECT * FROM `orders` INNER JOIN `orderItems` ON orders.orderId = orderItems.orderId INNER JOIN `menuItems` ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId = \"%s\"", orderId);
-		
+		String query = String.format(
+				"SELECT * FROM `orders` INNER JOIN `orderItems` ON orders.orderId = orderItems.orderId INNER JOIN `menuItems` ON menuItems.menuItemId = orderItems.menuItem WHERE orders.orderId = \"%s\"",
+				orderId);
+
 		System.out.println(query);
-		
+
 		ResultSet rs = db.selectData(query);
 
 		try {
@@ -96,7 +97,7 @@ public class OrderItem {
 				String menuItemName = rs.getString("menuItemName");
 				String menuItemDescription = rs.getString("menuItemDescription");
 				Double menuItemPrice = rs.getDouble("menuItemPrice");
-				
+
 				MenuItem menuItem = new MenuItem(menuItemId, menuItemName, menuItemDescription, menuItemPrice);
 				System.out.println(menuItemId + menuItemName + menuItemDescription + menuItemPrice);
 				System.out.println(id + idOrder + qty);
@@ -110,9 +111,9 @@ public class OrderItem {
 
 		return orderDetails;
 	}
-	
+
 	public Boolean deleteOrderItem(Integer orderItemId) {
-		
+
 		String query = String.format("DELETE FROM `orderItems` WHERE `orderItemId` = \"%s\"", orderItemId);
 		return db.execute(query);
 	}

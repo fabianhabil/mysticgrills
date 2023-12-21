@@ -59,7 +59,7 @@ public class ViewOrder extends BorderPane {
 
 	private OrderController orderController = OrderController.getInstance();
 	private GlobalState globalState = GlobalState.getInstance();
-	
+
 	private Order orderSelected;
 
 	public void initialize() {
@@ -259,7 +259,8 @@ public class ViewOrder extends BorderPane {
 				// if user click sure to delete the data
 				if (confirmationDelete) {
 //					System.out.println("Yes");
-					if(orderController.updateOrder(globalState.getCurrentLoggedInUser().getUserRole(), orderSelected.getOrderId())) {
+					if (orderController.updateOrder(globalState.getCurrentLoggedInUser().getUserRole(),
+							orderSelected.getOrderId())) {
 						dg.informationDialog("Information", "Information", "Process Order");
 						refreshTable();
 					}
@@ -273,8 +274,8 @@ public class ViewOrder extends BorderPane {
 				dg.informationDialog("Information", "Information", "Choose the data");
 			} else {
 				// confirmation to delete the data
-				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String.format(
-						"Are you sure you want to view this order (OrderId: %d)?", orderSelected.getOrderId()));
+				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String
+						.format("Are you sure you want to view this order (OrderId: %d)?", orderSelected.getOrderId()));
 
 				// if user click sure to delete the data
 				if (confirmationDelete) {
@@ -297,7 +298,7 @@ public class ViewOrder extends BorderPane {
 
 				// if user click sure to delete the data
 				if (confirmationDelete) {
-					if(orderController.deleteOrder(orderSelected.getOrderId())) {
+					if (orderController.deleteOrder(orderSelected.getOrderId())) {
 						dg.informationDialog("Information", "Information", "Order deleted");
 						refreshTable();
 					}

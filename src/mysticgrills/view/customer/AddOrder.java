@@ -365,12 +365,12 @@ public class AddOrder extends BorderPane {
 
 	// Helper to check if quantity not empty and must be a number
 	public boolean validateQuantity(String input) {
-		Pattern regex = Pattern.compile("\\d+(\\.\\d+)?");
-		if (!input.isBlank()) {
-			Matcher matcher = regex.matcher(input);
-			return matcher.matches();
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
-		return false;
 	}
 
 	public AddOrder(Stage stage) {

@@ -28,11 +28,26 @@ public class UserController {
 		return uc;
 	}
 
+	// Helper to check if a string is an email
+	public Boolean isValidEmail(String checkEmail) {
+		// For Email we check the @ character and make sure not on the first or last
+		// character
+		int atIndex = checkEmail.indexOf('@');
+		if (atIndex <= 0 || atIndex == checkEmail.length() - 1) {
+			return false;
+		}
+
+		// Check if . character exists and not comes after @ character
+		int dotIndex = checkEmail.indexOf('.', atIndex);
+		if (dotIndex == -1 || dotIndex == checkEmail.length() - 1) {
+			return false;
+		}
+
+		return true;
+	}
+
 	public String createUser(String userRole, String userName, String userEmail, String userPassword,
 			String passwordConfirm) {
-
-		Pattern regex = Pattern.compile("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-				+ "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$");
 
 		if (userName.isBlank()) {
 			return "Username cannot be empty";
@@ -46,10 +61,8 @@ public class UserController {
 			return "Email is not unique";
 		}
 
-		Matcher matcher = regex.matcher(userEmail);
-
-		if (!matcher.matches()) {
-			return "Email is not valid!";
+		if (!isValidEmail(userEmail)) {
+			return "Invalid Email!";
 		}
 
 		if (userPassword.length() < 6 || userPassword.isBlank() || passwordConfirm.isBlank()) {

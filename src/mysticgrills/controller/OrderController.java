@@ -42,5 +42,9 @@ public class OrderController {
 	public Boolean updateOrder(String role, Integer orderId) {
 		return order.updateOrder(role, orderId);
 	}
+	
+	public Boolean deleteOrder(Integer orderId) {
+		return order.deleteOrder(orderId);
+	}
 
 }

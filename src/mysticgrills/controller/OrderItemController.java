@@ -1,5 +1,7 @@
 package mysticgrills.controller;
 
+import java.util.ArrayList;
+
 import mysticgrills.DatabaseConnection;
 import mysticgrills.model.MenuItem;
 import mysticgrills.model.OrderItem;
@@ -27,4 +29,11 @@ public class OrderItemController {
 		return orderItem.createOrderItem(orderId, menuItem, quantity);
 	}
 
+	public ArrayList<OrderItem> getOrderItemsByOrderId(Integer orderId) {
+		return orderItem.getOrderItemsByOrderId(orderId);
+	}
+	
+	public Boolean deleteOrderItem(Integer orderItemId) {
+		return orderItem.deleteOrderItem(orderItemId);
+	}
 }

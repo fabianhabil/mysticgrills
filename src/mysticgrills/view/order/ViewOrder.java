@@ -51,7 +51,7 @@ public class ViewOrder extends BorderPane {
 	ScrollPane containerTable;
 	TableView<Order> viewOrder;
 	ArrayList<Order> orders;
-	Button processOrderButton, deleteButton, updateOrderButton, backButton;
+	Button processOrderButton, deleteButton, viewOrderButton, backButton;
 	GridPane formBox;
 	Dialog dg;
 	Text title;
@@ -59,10 +59,7 @@ public class ViewOrder extends BorderPane {
 
 	private OrderController orderController = OrderController.getInstance();
 	private GlobalState globalState = GlobalState.getInstance();
-
-	// We will use hashmap for temporary cart system, since we dont want two items
-	// with two different quantity for better complexity and looping behaviour
-//	private HashMap<Integer, Order> newOrderItems;
+	
 	private Order orderSelected;
 
 	public void initialize() {
@@ -79,7 +76,7 @@ public class ViewOrder extends BorderPane {
 		cartContainer = new VBox(8);
 
 		deleteButton = new Button("Delete");
-		updateOrderButton = new Button("Update");
+		viewOrderButton = new Button("View Order Detail");
 		backButton = new Button("Back");
 
 		viewOrder = new TableView<Order>();
@@ -142,9 +139,9 @@ public class ViewOrder extends BorderPane {
 
 		processOrderButton.setMinWidth(150);
 		deleteButton.setMinWidth(150);
-		updateOrderButton.setMinWidth(150);
+		viewOrderButton.setMinWidth(150);
 
-		buttonBox.getChildren().addAll(processOrderButton, updateOrderButton, deleteButton);
+		buttonBox.getChildren().addAll(processOrderButton, viewOrderButton, deleteButton);
 		buttonBox.setAlignment(Pos.CENTER);
 
 		containerTable.setContent(viewOrder);
@@ -271,17 +268,18 @@ public class ViewOrder extends BorderPane {
 		});
 
 		// Update Order Listener
-		updateOrderButton.setOnMouseClicked(e -> {
+		viewOrderButton.setOnMouseClicked(e -> {
 			if (orderSelected == null) {
 				dg.informationDialog("Information", "Information", "Choose the data");
 			} else {
 				// confirmation to delete the data
 				Boolean confirmationDelete = dg.confirmationDialog("Confirmation Dialog", "Confirmation", String.format(
-						"Are you sure you want to update this order (OrderId: %d)?", orderSelected.getOrderId()));
+						"Are you sure you want to view this order (OrderId: %d)?", orderSelected.getOrderId()));
 
 				// if user click sure to delete the data
 				if (confirmationDelete) {
 					System.out.println("Yes");
+					stage.setScene(new Scene(new ViewOrderDetail(stage, orderSelected.getOrderId()), 1366, 768));
 				}
 			}
 		});
@@ -299,6 +297,10 @@ public class ViewOrder extends BorderPane {
 
 				// if user click sure to delete the data
 				if (confirmationDelete) {
+					if(orderController.deleteOrder(orderSelected.getOrderId())) {
+						dg.informationDialog("Information", "Information", "Order deleted");
+						refreshTable();
+					}
 					System.out.println("Yes");
 				}
 			}

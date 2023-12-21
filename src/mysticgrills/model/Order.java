@@ -182,5 +182,10 @@ public class Order {
 		
 		return db.execute(query);
 	}
+	
+	public Boolean deleteOrder(Integer orderId) {
+		String query = String.format("DELETE FROM `orders` WHERE `orderId` = \"%s\"", orderId);
+		return db.execute(query);
+	}
 
 }
